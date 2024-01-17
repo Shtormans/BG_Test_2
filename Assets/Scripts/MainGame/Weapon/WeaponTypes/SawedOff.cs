@@ -1,13 +1,13 @@
 ﻿namespace MainGame
 {
-    public class SawedOff : Weapon
+    public class SawedOff : WeaponWithBullets
     {
         private void OnEnable()
         {
             Init();
         }
 
-        protected override void OnBulletHit(Entity entity)
+        protected override void OnHit(Entity entity)
         {
             entity.TakeDamage((uint)Stats.Damage);
         }

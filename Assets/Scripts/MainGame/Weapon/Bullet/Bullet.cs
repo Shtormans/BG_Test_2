@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Fusion;
+using System;
 using UnityEngine;
 
 namespace MainGame
 {
-    public abstract class Bullet : MonoBehaviour
+    public abstract class Bullet : NetworkBehaviour
     {
         public event Action<Entity> Hit;
 

@@ -7,6 +7,8 @@ namespace MainGame
     [CreateAssetMenu(fileName = "Data", menuName = "ScriptableObjects/Wave", order = 1)]
     public class Wave : ScriptableObject
     {
+        public float WaveTime;
+
         public List<EnemyPair> Enemies;
         public List<BonusPair> Bonuses;
     }

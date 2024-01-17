@@ -24,6 +24,11 @@ namespace MainGame
 
         public PlayerBehaviour GetNearestPlayer(Transform value)
         {
+            if (_instance._players.Count == 0)
+            {
+                return null;
+            }
+
             float minDistance = Vector3.Distance(_instance._players[0].transform.position, value.position);
             int index = 0;
 

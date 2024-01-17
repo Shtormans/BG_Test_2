@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace MainGame
 {
-    public class Shotgun : Weapon
+    public class Shotgun : WeaponWithBullets
     {
         [SerializeField] private int _bulletsAmount = 3;
         [SerializeField] private float _bulletAngle = 9f;
@@ -12,7 +12,7 @@ namespace MainGame
             Init();
         }
 
-        protected override void OnBulletHit(Entity entity)
+        protected override void OnHit(Entity entity)
         {
             entity.TakeDamage((uint)Stats.Damage);
         }

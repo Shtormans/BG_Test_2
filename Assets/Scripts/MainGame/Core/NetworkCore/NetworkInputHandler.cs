@@ -24,7 +24,6 @@ namespace MainGame
             if (Input.GetMouseButton(0))
             {
                 var mouse_pos = Input.mousePosition;
-                mouse_pos.z = -20;
                 var angle = Mathf.Atan2(mouse_pos.y, mouse_pos.x) * Mathf.Rad2Deg;
                 data.RotateDirection = Quaternion.Euler(0, 0, angle);
 

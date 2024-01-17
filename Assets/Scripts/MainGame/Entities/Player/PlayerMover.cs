@@ -5,8 +5,6 @@ namespace MainGame
     [RequireComponent(typeof(Rigidbody2D))]
     public class PlayerMover : MonoBehaviour
     {
-        [SerializeField] private float _speed = 10f;
-
         private Rigidbody2D _rigidbody;
 
         private void Awake()
@@ -14,9 +12,9 @@ namespace MainGame
             _rigidbody = GetComponent<Rigidbody2D>();
         }
 
-        public void Move(Vector2 direction, float deltaTime)
+        public void Move(float speed, Vector2 direction, float deltaTime)
         {
-            var newPosition = transform.position + (Vector3)(_speed * deltaTime * direction);
+            var newPosition = transform.position + (Vector3)(speed * deltaTime * direction);
             _rigidbody.MovePosition(newPosition);
         }
     }

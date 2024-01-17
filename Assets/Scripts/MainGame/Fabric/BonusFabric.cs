@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace MainGame
 {
-    public class BonusesFabric
+    public class BonusFabric : MonoBehaviour
     {
         public List<BonusController> CreateWave(Wave wave)
         {

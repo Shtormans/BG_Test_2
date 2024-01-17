@@ -1,4 +1,5 @@
 ﻿using Fusion;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -7,10 +8,11 @@ namespace MainGame
 {
     public class NetworkSpawner : NetworkRunnerCallbacks
     {
-        [SerializeField] private NetworkPrefabRef _playerPrefab;
+        [SerializeField] private PlayerFabric _playerFabric;
         private Dictionary<PlayerRef, NetworkObject> _spawnedCharacters = new Dictionary<PlayerRef, NetworkObject>();
-
         private NetworkRunner _runner;
+
+        public event Action HostJoined;
 
         private void Awake()
         {
@@ -39,6 +41,8 @@ namespace MainGame
                 Scene = scene,
                 SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>()
             });
+
+            HostJoined?.Invoke();
         }
 
         public override void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
@@ -46,8 +50,7 @@ namespace MainGame
             if (runner.IsServer)
             {
                 // Create a unique position for the player
-                Vector3 spawnPosition = Vector3.zero;
-                NetworkObject networkPlayerObject = runner.Spawn(_playerPrefab, spawnPosition, Quaternion.identity, player);
+                NetworkObject networkPlayerObject = _playerFabric.Create(runner, player).GetComponent<NetworkObject>();
                 // Keep track of the player avatars for easy access
                 _spawnedCharacters.Add(player, networkPlayerObject);
             }

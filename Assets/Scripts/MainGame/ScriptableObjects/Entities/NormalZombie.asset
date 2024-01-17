@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6794738636e47734a8811e33267a4c17, type: 3}
   m_Name: NormalZombie
   m_EditorClassIdentifier: 
-  <EnemyData>k__BackingField:
-    Health: 3
-    Speed: 3
+  <EntityData>k__BackingField:
+    Health: 4
+    Speed: 2

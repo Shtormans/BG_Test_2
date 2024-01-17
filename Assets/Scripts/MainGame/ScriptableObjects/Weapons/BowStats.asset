@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 174e3d05e286a2944bc5d38bbe1ba2e7, type: 3}
   m_Name: BowStats
   m_EditorClassIdentifier: 
-  Bullet: {fileID: 8096842892572791137, guid: 3027f1471f5aad24d913ca6a07408cb1, type: 3}
+  Bullet: {fileID: 7366586026546222550, guid: 3027f1471f5aad24d913ca6a07408cb1, type: 3}
   Damage: 2
-  Distance: 40
+  TimeBeforeDisappear: 4
   BulletSpeed: 4
   Clip: 20
   StartAmount: 100

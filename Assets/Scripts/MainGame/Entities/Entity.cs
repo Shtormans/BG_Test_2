@@ -6,19 +6,22 @@ namespace MainGame
 {
     public abstract class Entity : NetworkBehaviour
     {
-        [SerializeField] public EntityStats Stats; 
+        [field: SerializeField] public Weapon Weapon { get; protected set; }
+        [SerializeField] public EntityStats Stats;
         private Health _health;
 
         public event Action Died;
+        public event Action Hit;
 
         protected void Init()
         {
-            _health = new Health(Stats.EnemyData.Health);
+            _health = new Health(Stats.EntityData.Health);
         }
 
         public void TakeDamage(uint damage)
         {
             _health.TakeDamage((int)damage);
+            Hit?.Invoke();
 
             if (_health.IsAlive())
             {

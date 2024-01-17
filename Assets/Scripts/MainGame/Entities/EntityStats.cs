@@ -7,7 +7,7 @@ namespace MainGame
     public class EntityStats : ScriptableObject
     {
         [field:SerializeField]
-        public EntityData EnemyData { get; private set; }
+        public EntityData EntityData { get; private set; }
     }
 
     [Serializable]

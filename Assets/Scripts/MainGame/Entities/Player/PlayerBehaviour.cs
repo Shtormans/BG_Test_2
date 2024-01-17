@@ -1,14 +1,13 @@
-using Fusion;
-using System;
 using UnityEngine;
 
 namespace MainGame
 {
     public class PlayerBehaviour : Entity
     {
-        [SerializeField] private Weapon _weapon;
-
+        [SerializeField] private Transform _body;
         private PlayerMover _playerPhysics;
+
+        public Transform Body => _body;
 
         private void Awake()
         {
@@ -20,14 +19,19 @@ namespace MainGame
         {
             if (GetInput(out PlayerInputData data))
             {
-                _playerPhysics.Move(data.MoveDirection, Runner.DeltaTime);
+                _playerPhysics.Move(Stats.EntityData.Speed, data.MoveDirection, Runner.DeltaTime);
 
                 if (data.NeedToRotate)
                 {
-                    _weapon.transform.rotation = data.RotateDirection;
-                    _weapon.Shoot();
+                    Weapon.transform.rotation = data.RotateDirection;
+                    Weapon.Shoot();
                 }
             }
+        }
+
+        public void SetWeapon(Weapon weapon)
+        {
+            Weapon = weapon;
         }
     }
 }

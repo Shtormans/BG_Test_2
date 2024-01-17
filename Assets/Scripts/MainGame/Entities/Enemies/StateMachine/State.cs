@@ -1,4 +1,5 @@
 ﻿using Fusion;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace MainGame
@@ -8,9 +9,11 @@ namespace MainGame
         protected NetworkRunner Runner;
         protected EnemyController Enemy;
         protected EnemyStateMachine StateMachine;
+        protected List<StateTransition> _transitions;
 
-        public State(EnemyStateMachine stateMachine, EnemyController Enemy, NetworkRunner runner)
+        public State(EnemyStateMachine stateMachine, EnemyController enemy, NetworkRunner runner)
         {
+            Enemy = enemy;
             Runner = runner;
             StateMachine = stateMachine;
         }
@@ -18,5 +21,16 @@ namespace MainGame
         public virtual void EnterState() { }
         public virtual void ExitState() { }
         public abstract void Update();
+
+        protected void CheckTransitions()
+        {
+            foreach (var transition in _transitions)
+            {
+                if (transition.CheckCondition(Enemy))
+                {
+                    transition.ChangeState();
+                }
+            }
+        }
     }
 }

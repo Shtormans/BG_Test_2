@@ -10,6 +10,7 @@ namespace MainGame
         public int Damage;
         public float TimeBeforeDisappear;
         public float BulletSpeed;
+        public bool InfiniteAmmo;
         public int Clip;
         public int StartAmount;
         public float ReloadTime;

@@ -3,8 +3,10 @@ using UnityEngine;
 
 namespace MainGame
 {
-    public class EnemyFabric
+    public class EnemyFabric : MonoBehaviour
     {
+        [SerializeField] private PlayersContainer _playersContainer;
+
         public List<EnemyController> CreateWave(Wave wave)
         {
             var enemies = new List<EnemyController>();
@@ -14,6 +16,8 @@ namespace MainGame
                 for (int i = 0; i < item.Amount; i++)
                 {
                     var enemy = Spawn(item.Enemy);
+                    enemy.SetPlayersContainer(_playersContainer);
+                    
                     enemies.Add(enemy);
                 }
             }
