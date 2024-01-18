@@ -19,7 +19,7 @@
         "PlayerCount": 10,
         "TickRateSelection": {
             "Client": 64,
-            "ServerIndex": 0,
+            "ServerIndex": 1,
             "ClientSendIndex": 1,
             "ServerSendIndex": 1
         }

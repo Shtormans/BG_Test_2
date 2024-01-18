@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace MainGame
@@ -6,6 +7,7 @@ namespace MainGame
     public class PlayersContainer : MonoBehaviour
     {
         [SerializeField] private List<PlayerBehaviour> _players;
+        [SerializeField] private PlayerFabric _playerFabric;
 
         private static PlayersContainer _instance;
 
@@ -13,6 +15,8 @@ namespace MainGame
         {
             if (_instance == null)
             {
+                _players = new();
+
                 _instance = this;
             }
         }
@@ -20,6 +24,27 @@ namespace MainGame
         public void AddPlayer(PlayerBehaviour player)
         {
             _instance._players.Add(player);
+
+            player.SpawnedEvent += OnPlayerSpawned;
+        }
+
+        private void OnPlayerSpawned(PlayerBehaviour player)
+        {
+            _instance.StartCoroutine(AwaitToBuildPlayer(player));
+        }
+
+        private IEnumerator AwaitToBuildPlayer(PlayerBehaviour player)
+        {
+            yield return null;
+
+            if (player.HasInputAuthority)
+            {
+                _instance._playerFabric.UpdateInputPlayer(player);
+            }
+            else
+            {
+                _instance._playerFabric.UpdateSharedPlayer(player);
+            }
         }
 
         public PlayerBehaviour GetNearestPlayer(Transform value)

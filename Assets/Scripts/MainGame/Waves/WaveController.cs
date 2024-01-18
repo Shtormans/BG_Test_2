@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using Fusion;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace MainGame
 {
-    public class WaveController : MonoBehaviour
+    public class WaveController : NetworkBehaviour
     {
         [SerializeField] private WaveContainer _waveContainer;
         [SerializeField] private SpawnersContainer _spawnersContainer;
@@ -12,6 +13,8 @@ namespace MainGame
 
         public void SpawnNewWave()
         {
+            if (HasStateAuthority == false) return;
+
             var wave = _waveContainer.NextWave();
 
             var enemies = _enemyFabric.CreateWave(wave);

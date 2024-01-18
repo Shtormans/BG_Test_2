@@ -8,6 +8,11 @@ namespace MainGame
         [SerializeField] protected WeaponStats Stats;
         protected float _lastFireTime;
 
+        public override void Spawned()
+        {
+            NetworkObjectsContainer.Instance.AddObject(this);
+        }
+
         protected virtual void Init()
         {
             _lastFireTime = -Stats.FireRate;
@@ -15,6 +20,11 @@ namespace MainGame
 
         public virtual void Shoot()
         {
+            if (!HasStateAuthority)
+            {
+                return;
+            }
+
             if (!TimePassedBeforeNextShoot())
             {
                 return;
@@ -28,6 +38,11 @@ namespace MainGame
         protected bool TimePassedBeforeNextShoot()
         {
             return Time.time - _lastFireTime > Stats.FireRate;
+        }
+
+        protected bool IsFriendlyFire(Entity entity)
+        {
+            return entity.Weapon != this;
         }
 
         protected abstract void Fire();

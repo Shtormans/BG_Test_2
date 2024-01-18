@@ -11,16 +11,29 @@ namespace MainGame
         private Animator _animator;
         private Vector3 _lastPosition;
 
+        public override void Spawned()
+        {
+            NetworkObjectsContainer.Instance.AddObject(this);
+        }
+
         private void Awake()
         {
             _animator = GetComponent<Animator>();
             _spriteRenderer = GetComponent<SpriteRenderer>();
+
+            _lastPosition = transform.position;
         }
 
 
         private void Update()
         {
+            if (_entity == null)
+            {
+                return;
+            }
+
             var direction = (_entity.transform.position - _lastPosition).normalized;
+            SetIsRunning(direction.x != 0 || direction.y != 0);
 
             if (direction.x != 0 && _spriteRenderer.flipX != direction.x < 0)
             {
@@ -35,18 +48,23 @@ namespace MainGame
             _entity = entity;
 
             _lastPosition = _entity.transform.position;
-            _entity.Hit += OnHit;
-            _entity.Died += OnDied;
+            entity.Hit += OnHit;
+            entity.Died += OnDied;
+        }
+
+        private void SetIsRunning(bool isRunning)
+        {
+            _animator.SetFloat(AnimationNameHelpers.Speed, isRunning ? 1 : 0);
         }
 
         private void OnDied()
         {
-            _animator.SetTrigger(AnimaionTriggers.Died);
+            _animator.SetTrigger(AnimationNameHelpers.Died);
         }
 
         private void OnHit()
         {
-            _animator.SetTrigger(AnimaionTriggers.Hit);
+            _animator.SetTrigger(AnimationNameHelpers.Hit);
         }
     }
 }

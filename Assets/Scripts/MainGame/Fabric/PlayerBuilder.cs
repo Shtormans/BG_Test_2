@@ -1,4 +1,6 @@
 ﻿using Cinemachine;
+using Fusion;
+using System;
 using UnityEngine;
 
 namespace MainGame
@@ -19,7 +21,7 @@ namespace MainGame
 
         public PlayerBuilder AddWeapon(Weapon weapon)
         {
-            weapon.transform.parent = _player.transform;
+            weapon.transform.parent = _player.Body.transform;
             weapon.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
             _player.SetWeapon(weapon);
 
@@ -29,7 +31,7 @@ namespace MainGame
         public PlayerBuilder AddSkin(AnimatedSkin skin)
         {
             skin.SetEntity(_player);
-            skin.transform.parent = _player.transform;
+            skin.transform.parent = _player.Body.transform;
             skin.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
 
             return this;
@@ -37,13 +39,20 @@ namespace MainGame
 
         public PlayerBuilder AddCamera(CinemachineVirtualCamera camera)
         {
-            camera.Follow = _player.transform;
+            _player.SetCamera(camera);
 
             return this;
         }
 
         public PlayerBuilder AddJoysticks()
         {
+            return this;
+        }
+
+        public PlayerBuilder AddPlayerBody(PlayerBody playerBody)
+        {
+            _player.SetPlayerData(playerBody);
+
             return this;
         }
 

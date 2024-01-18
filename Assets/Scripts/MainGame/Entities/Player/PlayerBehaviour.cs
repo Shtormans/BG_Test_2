@@ -1,3 +1,6 @@
+using Cinemachine;
+using Fusion;
+using System;
 using UnityEngine;
 
 namespace MainGame
@@ -7,19 +10,30 @@ namespace MainGame
         [SerializeField] private Transform _body;
         private PlayerMover _playerPhysics;
 
-        public Transform Body => _body;
+        [Networked] public PlayerBody PlayerBody { get; set; }
 
-        private void Awake()
+        public Transform Body => _body;
+        public event Action<PlayerBehaviour> SpawnedEvent;
+
+        public override void Spawned()
         {
             _playerPhysics = GetComponent<PlayerMover>();
             new PlayersContainer().AddPlayer(this);
+
+            SpawnedEvent?.Invoke(this);
         }
 
         public override void FixedUpdateNetwork()
         {
+            if (!HasStateAuthority)
+            {
+                return;
+            }
+
             if (GetInput(out PlayerInputData data))
             {
                 _playerPhysics.Move(Stats.EntityData.Speed, data.MoveDirection, Runner.DeltaTime);
+
 
                 if (data.NeedToRotate)
                 {
@@ -29,9 +43,24 @@ namespace MainGame
             }
         }
 
+        public void SetPlayerData(PlayerBody playerBody)
+        {
+            PlayerBody = playerBody;
+        }
+
         public void SetWeapon(Weapon weapon)
         {
             Weapon = weapon;
+        }
+
+        public void SetCamera(CinemachineVirtualCamera camera)
+        {
+            if (!Object.HasInputAuthority)
+            {
+                return;
+            }
+
+            camera.Follow = transform;
         }
     }
 }

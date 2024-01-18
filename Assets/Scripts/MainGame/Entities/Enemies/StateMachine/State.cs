@@ -29,6 +29,8 @@ namespace MainGame
                 if (transition.CheckCondition(Enemy))
                 {
                     transition.ChangeState();
+
+                    return;
                 }
             }
         }

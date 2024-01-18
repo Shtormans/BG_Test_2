@@ -1,8 +1,9 @@
 ﻿namespace MainGame
 {
-    public static class AnimaionTriggers
+    public static class AnimationNameHelpers
     {
         public const string Hit = "Hit";
         public const string Died = "Died";
+        public const string Speed = "Speed";
     }
 }

@@ -12,8 +12,6 @@ namespace MainGame
             int index = Random.Range(0, _skinsList.Count - 1);
             var skin = _skinsList[index];
 
-            _skinsList.RemoveAt(index);
-
             return skin;
         }
     }

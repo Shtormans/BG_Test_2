@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 3592072972643384392}
   - component: {fileID: 1597989177893952702}
   - component: {fileID: -826378305251554273}
+  - component: {fileID: 3607378105647916528}
   m_Layer: 0
   m_Name: Bow
   m_TagString: Untagged
@@ -63,10 +64,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SortKey: 3378585310
   ObjectInterest: 1
-  Flags: 262145
+  Flags: 786433
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: 1597989177893952702}
+  - {fileID: 3607378105647916528}
+--- !u!114 &3607378105647916528
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 327347178310666578}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SyncScale: 0
+  SyncParent: 1
+  _autoAOIOverride: 1
+  DisableSharedModeInterpolation: 0
 --- !u!1 &3078120369671177672
 GameObject:
   m_ObjectHideFlags: 0

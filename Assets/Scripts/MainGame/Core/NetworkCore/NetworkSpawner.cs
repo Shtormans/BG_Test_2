@@ -11,12 +11,31 @@ namespace MainGame
         [SerializeField] private PlayerFabric _playerFabric;
         private Dictionary<PlayerRef, NetworkObject> _spawnedCharacters = new Dictionary<PlayerRef, NetworkObject>();
         private NetworkRunner _runner;
+        private PlayerRef _currentPlayer;
+
+        public NetworkRunner Runner => _runner;
+        public PlayerRef CurrentPlayer => _currentPlayer;
 
         public event Action HostJoined;
 
         private void Awake()
         {
-            StartGame(GameMode.Host);
+            
+        }
+
+        private void OnGUI()
+        {
+            if (_runner == null)
+            {
+                if (GUI.Button(new Rect(0, 0, 200, 40), "Host"))
+                {
+                    StartGame(GameMode.Host);
+                }
+                if (GUI.Button(new Rect(0, 40, 200, 40), "Join"))
+                {
+                    StartGame(GameMode.Client);
+                }
+            }
         }
 
         private async void StartGame(GameMode mode)
@@ -53,6 +72,8 @@ namespace MainGame
                 NetworkObject networkPlayerObject = _playerFabric.Create(runner, player).GetComponent<NetworkObject>();
                 // Keep track of the player avatars for easy access
                 _spawnedCharacters.Add(player, networkPlayerObject);
+
+                _currentPlayer = player;
             }
         }
 

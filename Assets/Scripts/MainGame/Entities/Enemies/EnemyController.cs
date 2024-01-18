@@ -10,8 +10,10 @@ namespace MainGame
 
         public Rigidbody2D Rigidbody { get; protected set; }
 
-        public override void FixedUpdateNetwork()
+        public void Update()
         {
+            if (!HasStateAuthority) return;
+
             UpdateTarget();
             Move();
         }
@@ -26,8 +28,7 @@ namespace MainGame
         {
             var player = PlayersContainer.GetNearestPlayer(transform);
 
-            Target = player.transform != null ? player.transform : transform;
-            Debug.Log(Target);
+            Target = player != null ? player.transform : transform;
         }
     }
 }

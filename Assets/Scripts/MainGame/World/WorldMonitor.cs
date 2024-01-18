@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Fusion;
+using UnityEngine;
 
 namespace MainGame
 {
@@ -6,6 +7,7 @@ namespace MainGame
     {
         [SerializeField] private WaveController _waveController;
         [SerializeField] private NetworkSpawner _networkSpawner;
+        [Networked] private bool IsGameAlreadyExist { get; set; }
 
         public void Awake()
         {
@@ -14,7 +16,11 @@ namespace MainGame
 
         public void StartGame()
         {
-            _waveController.SpawnNewWave();
+            if (!IsGameAlreadyExist)
+            {
+                IsGameAlreadyExist = true;
+                _waveController.SpawnNewWave();
+            }
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Fusion;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace MainGame
@@ -6,6 +7,7 @@ namespace MainGame
     public class EnemyFabric : MonoBehaviour
     {
         [SerializeField] private PlayersContainer _playersContainer;
+        [SerializeField] private NetworkSpawner _networkSpawner;
 
         public List<EnemyController> CreateWave(Wave wave)
         {
@@ -27,7 +29,7 @@ namespace MainGame
 
         private EnemyController Spawn(EnemyController enemy)
         {
-            return GameObject.Instantiate(enemy, Vector3.zero, Quaternion.identity);
+            return _networkSpawner.Runner.Spawn(enemy, Vector3.zero, Quaternion.identity, _networkSpawner.CurrentPlayer);
         }
     }
 }

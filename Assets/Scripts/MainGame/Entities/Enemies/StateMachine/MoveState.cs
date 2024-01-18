@@ -32,7 +32,8 @@ namespace MainGame
         private void Rotate(Vector3 direction)
         {
             var angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-            Enemy.Weapon.transform.rotation = Quaternion.Euler(0, 0, angle);
+            //Enemy.Weapon.transform.rotation = Quaternion.Euler(0, 0, angle);
+            Enemy.Weapon.transform.rotation = Quaternion.Euler(Random.Range(0, 1), Random.Range(0, 1), Random.Range(0, 1));
         }
     }
 }
