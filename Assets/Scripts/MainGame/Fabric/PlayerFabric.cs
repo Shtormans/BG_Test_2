@@ -10,6 +10,7 @@ namespace MainGame
         [SerializeField] private WeaponsContainer _weaponsContainer;
         [SerializeField] private SkinsContainer _skinsContainer;
         [SerializeField] private CinemachineVirtualCamera _virtualCamera;
+        [SerializeField] private PlayerStatsUIController _playerStatsUIController;
 
         public PlayerBehaviour Create(NetworkRunner runner, PlayerRef inputAuthority)
         {
@@ -24,7 +25,6 @@ namespace MainGame
             };
 
             player = PlayerBuilder.CreateBuilder(player)
-                .AddWeapon(weapon)
                 .AddSkin(skin)
                 .AddPlayerBody(playerBody)
                 .Build();
@@ -34,11 +34,9 @@ namespace MainGame
 
         public void UpdateSharedPlayer(PlayerBehaviour player)
         {
-            Weapon weapon;
-            NetworkObjectsContainer.Instance.TryGetObjectById(player.PlayerBody.WeaponId, out weapon);
+            NetworkObjectsContainer.Instance.TryGetObjectById(player.PlayerBody.WeaponId, out Weapon weapon);
 
-            AnimatedSkin skin;
-            NetworkObjectsContainer.Instance.TryGetObjectById(player.PlayerBody.SpriteId, out skin);
+            NetworkObjectsContainer.Instance.TryGetObjectById(player.PlayerBody.SpriteId, out AnimatedSkin skin);
 
             PlayerBuilder.CreateBuilder(player)
                 .AddWeapon(weapon)
@@ -52,6 +50,7 @@ namespace MainGame
 
             PlayerBuilder.CreateBuilder(player)
                 .AddCamera(_virtualCamera)
+                .AddUIController(_playerStatsUIController)
                 .Build();
         }
     }

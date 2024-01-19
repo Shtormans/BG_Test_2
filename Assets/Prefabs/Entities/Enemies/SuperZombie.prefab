@@ -47,7 +47,6 @@ GameObject:
   - component: {fileID: 6342139217034048424}
   - component: {fileID: 1472122284356334836}
   - component: {fileID: 3372984861757394568}
-  - component: {fileID: -710409604381200334}
   m_Layer: 6
   m_Name: SuperZombie
   m_TagString: Untagged
@@ -118,7 +117,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 7
 --- !u!114 &6342139217034048424
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -164,7 +163,7 @@ BoxCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3559411430013317499}
-  m_Enabled: 0
+  m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
   m_IncludeLayers:
@@ -202,20 +201,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.75014615, y: 0.96971476}
   m_EdgeRadius: 0
---- !u!114 &-710409604381200334
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3559411430013317499}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 1541381998, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Guid:
-    RawGuidValue: d49da731c234a3647a66fff9c31366a5
 --- !u!1 &8646676575189607460
 GameObject:
   m_ObjectHideFlags: 0

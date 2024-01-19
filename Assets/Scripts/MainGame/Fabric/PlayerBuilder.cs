@@ -56,6 +56,13 @@ namespace MainGame
             return this;
         }
 
+        public PlayerBuilder AddUIController(PlayerStatsUIController playerStatsUIController)
+        {
+            playerStatsUIController.SetPlayer(_player);
+
+            return this;
+        }
+
         public PlayerBehaviour Build()
         {
             return _player;

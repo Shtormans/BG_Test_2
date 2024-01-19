@@ -1,4 +1,5 @@
 ﻿using Fusion;
+using System;
 using UnityEngine;
 
 namespace MainGame
@@ -7,6 +8,8 @@ namespace MainGame
     {
         [SerializeField] protected WeaponStats Stats;
         protected float _lastFireTime;
+
+        public event Action Fired;
 
         public override void Spawned()
         {
@@ -31,8 +34,14 @@ namespace MainGame
             }
 
             Fire();
+            TriggerFireEvent();
 
             _lastFireTime = Time.time;
+        }
+
+        protected void TriggerFireEvent()
+        {
+            Fired?.Invoke();
         }
 
         protected bool TimePassedBeforeNextShoot()

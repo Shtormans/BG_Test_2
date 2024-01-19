@@ -5,6 +5,8 @@
         private int _maxHealth;
         private int _currentHealth;
 
+        public int CurrentHealth => _currentHealth;
+
         public Health(int maxHealth)
         {
             _maxHealth = maxHealth;

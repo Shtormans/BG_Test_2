@@ -34,7 +34,7 @@ namespace MainGame
         protected override void Fire()
         {
             _collider.enabled = true;
-            _animator.SetTrigger(AnimationNameHelpers.Hit);
+            _animator.SetTrigger(AnimationTriggers.Hit.ToString());
         }
 
         private IEnumerator AwaitHit()

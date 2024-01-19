@@ -21,6 +21,10 @@ namespace MainGame
             _animator = GetComponent<Animator>();
             _spriteRenderer = GetComponent<SpriteRenderer>();
 
+            if (_entity != null)
+            {
+                _entity.AnimationTriggered += OnAnimationTriggered;
+            }
             _lastPosition = transform.position;
         }
 
@@ -33,7 +37,6 @@ namespace MainGame
             }
 
             var direction = (_entity.transform.position - _lastPosition).normalized;
-            SetIsRunning(direction.x != 0 || direction.y != 0);
 
             if (direction.x != 0 && _spriteRenderer.flipX != direction.x < 0)
             {
@@ -48,23 +51,12 @@ namespace MainGame
             _entity = entity;
 
             _lastPosition = _entity.transform.position;
-            entity.Hit += OnHit;
-            entity.Died += OnDied;
+            entity.AnimationTriggered += OnAnimationTriggered;
         }
 
-        private void SetIsRunning(bool isRunning)
+        private void OnAnimationTriggered(AnimationTriggers trigger)
         {
-            _animator.SetFloat(AnimationNameHelpers.Speed, isRunning ? 1 : 0);
-        }
-
-        private void OnDied()
-        {
-            _animator.SetTrigger(AnimationNameHelpers.Died);
-        }
-
-        private void OnHit()
-        {
-            _animator.SetTrigger(AnimationNameHelpers.Hit);
+            _animator.SetTrigger(trigger.ToString());
         }
     }
 }

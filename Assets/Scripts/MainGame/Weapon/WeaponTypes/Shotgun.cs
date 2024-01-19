@@ -19,7 +19,7 @@ namespace MainGame
 
         protected override void Fire()
         {
-            var degrees = _bulletAngle * (_bulletsAmount / 2f);
+            var degrees = -_bulletAngle * (_bulletsAmount / 2f);
             if (_bulletsAmount % 2 == 0)
             {
                 degrees += _bulletAngle / 2f;
@@ -27,7 +27,6 @@ namespace MainGame
 
             for (int i = 0; i < _bulletsAmount; i++)
             {
-
                 var rotation = Quaternion.AngleAxis(transform.rotation.eulerAngles.z + degrees, Vector3.forward);
                 CreateBullet(BulletSpawner.position, rotation);
 

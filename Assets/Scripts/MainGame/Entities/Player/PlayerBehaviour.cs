@@ -32,7 +32,22 @@ namespace MainGame
 
             if (GetInput(out PlayerInputData data))
             {
-                _playerPhysics.Move(Stats.EntityData.Speed, data.MoveDirection, Runner.DeltaTime);
+                if (data.MoveDirection.x != 0 || data.MoveDirection.y != 0)
+                {
+                    _playerPhysics.Move(Stats.EntityData.Speed, data.MoveDirection, Runner.DeltaTime);
+
+                    if (!IsRunning)
+                    {
+                        RPC_SendTrigger(AnimationTriggers.StartedRunning);
+                    }
+                }
+                else
+                {
+                    if (IsRunning)
+                    {
+                        RPC_SendTrigger(AnimationTriggers.StoppedRunning);
+                    }
+                }
 
 
                 if (data.NeedToRotate)

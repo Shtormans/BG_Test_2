@@ -36,7 +36,7 @@ namespace MainGame
         private IEnumerator AwaitToBuildPlayer(PlayerBehaviour player)
         {
             yield return null;
-
+            
             if (player.HasInputAuthority)
             {
                 _instance._playerFabric.UpdateInputPlayer(player);

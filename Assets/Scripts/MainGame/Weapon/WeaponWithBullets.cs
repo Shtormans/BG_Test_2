@@ -4,15 +4,21 @@ using UnityEngine;
 
 namespace MainGame
 {
-    public abstract class WeaponWithBullets : Weapon 
+    public abstract class WeaponWithBullets : Weapon
     {
         [SerializeField] protected Transform BulletSpawner;
+        private float _timeBetweenReloading = 1f;
 
         protected int _clip;
         protected int _inAmmo;
         protected bool _isReloading;
 
-        public event Action<float> Reloaded;
+        public int Clip => _clip;
+        public int InAmmo => _inAmmo;
+
+        public event Action<float> StartedReloading;
+        public event Action<float> ReloadingTimeChanged;
+        public event Action StoppedReloading;
 
         protected override void Init()
         {
@@ -45,6 +51,13 @@ namespace MainGame
 
             Fire();
 
+            if (!Stats.InfiniteAmmo)
+            {
+                _clip -= 1;
+            }
+
+            TriggerFireEvent();
+
             _lastFireTime = Time.time;
             if (!Stats.InfiniteAmmo)
             {
@@ -54,10 +67,9 @@ namespace MainGame
 
         private void HandleBullets()
         {
-            _clip -= 1;
-            if (_clip == 0)
+            if (_clip == 0 && _inAmmo > 0)
             {
-                Reloaded?.Invoke(Stats.ReloadTime);
+                StartedReloading?.Invoke(Stats.ReloadTime);
                 Reload();
             }
         }
@@ -69,9 +81,16 @@ namespace MainGame
 
         private IEnumerator AwaitReload()
         {
-            _isReloading = false;
+            _isReloading = true;
+            float timePassed = 0f;
 
-            yield return new WaitForSeconds(Stats.ReloadTime);
+            while (timePassed <= Stats.ReloadTime)
+            {
+                yield return new WaitForSeconds(_timeBetweenReloading);
+
+                timePassed += _timeBetweenReloading;
+                ReloadingTimeChanged?.Invoke(Stats.ReloadTime - timePassed);
+            }
 
             if (_inAmmo - Stats.Clip < 0)
             {
@@ -84,7 +103,8 @@ namespace MainGame
                 _clip = Stats.Clip;
             }
 
-            _isReloading = true;
+            _isReloading = false;
+            StoppedReloading?.Invoke();
         }
     }
 }
