@@ -1,6 +1,6 @@
 ﻿namespace MainGame
 {
-    public class Health
+    public struct Health
     {
         private int _maxHealth;
         private int _currentHealth;
@@ -13,14 +13,19 @@
             _currentHealth = _maxHealth;
         }
         
-        public void TakeDamage(int damage)
+        public void TakeDamage(uint damage)
         {
-            _currentHealth -= damage;
+            _currentHealth -= (int)damage;
 
             if (_currentHealth < 0)
             {
                 _currentHealth = 0;
             }
+        }
+
+        public void AddHealth(uint health)
+        {
+            _currentHealth += (int)health;
         }
 
         public bool IsAlive()

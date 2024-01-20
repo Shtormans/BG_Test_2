@@ -22,6 +22,7 @@ namespace MainGame
         public PlayerBuilder AddWeapon(Weapon weapon)
         {
             weapon.transform.parent = _player.Body.transform;
+            weapon.transform.parent = _player.Body.transform;
             weapon.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
             _player.SetWeapon(weapon);
 
@@ -31,6 +32,7 @@ namespace MainGame
         public PlayerBuilder AddSkin(AnimatedSkin skin)
         {
             skin.SetEntity(_player);
+            skin.transform.position = _player.Body.position;
             skin.transform.parent = _player.Body.transform;
             skin.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
 

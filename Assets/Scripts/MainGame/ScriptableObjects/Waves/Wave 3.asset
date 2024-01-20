@@ -10,10 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b68244bc834f2814c8a065eb98f9cbd8, type: 3}
-  m_Name: FirstWave
+  m_Name: Wave 3
   m_EditorClassIdentifier: 
-  WaveTime: 60
+  WaveTime: 30
+  RestTimeBeforeNextWave: 15
   Enemies:
+  - Enemy: {fileID: 377020424657664988, guid: 50c86db40ebdf6d408e47ebe2d62f9be, type: 3}
+    Amount: 5
   - Enemy: {fileID: 5597728625955732964, guid: 20fc2e287eb64f749880a89af6b4944e, type: 3}
-    Amount: 1
+    Amount: 3
+  - Enemy: {fileID: 1472122284356334836, guid: d49da731c234a3647a66fff9c31366a5, type: 3}
+    Amount: 2
   Bonuses: []

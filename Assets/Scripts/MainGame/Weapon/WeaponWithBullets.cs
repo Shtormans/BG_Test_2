@@ -19,6 +19,7 @@ namespace MainGame
         public event Action<float> StartedReloading;
         public event Action<float> ReloadingTimeChanged;
         public event Action StoppedReloading;
+        public event Action BulletsAmountChanged;
 
         protected override void Init()
         {
@@ -27,6 +28,12 @@ namespace MainGame
             _lastFireTime = -Stats.FireRate;
 
             _isReloading = false;
+        }
+
+        public void AddClips(int clips)
+        {
+            _inAmmo += clips * Stats.Clip;
+            BulletsAmountChanged?.Invoke();
         }
 
         public void CreateBullet(Vector3 position, Quaternion direction)
@@ -49,7 +56,10 @@ namespace MainGame
                 return;
             }
 
-            Fire();
+            if (HasStateAuthority)
+            {
+                Fire();
+            }
 
             if (!Stats.InfiniteAmmo)
             {

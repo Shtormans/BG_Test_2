@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Skeleton
   m_EditorClassIdentifier: 
   <EntityData>k__BackingField:
-    Health: 4
+    Health: 8
     Speed: 3

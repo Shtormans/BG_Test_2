@@ -4,11 +4,16 @@ using UnityEngine;
 
 namespace MainGame
 {
-    public class PlayerStatsUIController : NetworkBehaviour
+    public class PlayerStatsUIController : MonoBehaviour
     {
         [SerializeField] private TextMeshProUGUI _healthText;
         [SerializeField] private TextMeshProUGUI _weaponText;
         [SerializeField] private TextMeshProUGUI _reloadingTimeText;
+        [SerializeField] private TextMeshProUGUI _amountOfKillsText;
+        [SerializeField] private TextMeshProUGUI _waveNumberText;
+        [SerializeField] private TextMeshProUGUI _timeToNextWaveText;
+
+        [SerializeField] private WaveController _waveController;
 
         private PlayerBehaviour _player;
 
@@ -16,24 +21,50 @@ namespace MainGame
         {
             _player = player;
 
-            player.Hit += OnPlayerHit;
-            player.Weapon.Fired += OnPlayerShoot;
-            (player.Weapon as WeaponWithBullets).StartedReloading += OnStartedReloading;
-            (player.Weapon as WeaponWithBullets).StoppedReloading += OnStoppedReloading;
-            (player.Weapon as WeaponWithBullets).ReloadingTimeChanged += OnReloadingTimeChanged;
+            player.WasHit += OnPlayerWasHit;
+            player.Killed += OnKillAmountChanged;
+            var weapon = player.Weapon as WeaponWithBullets;
+            player.PlayerWeapon.BulletsAmountChanged += OnPlayerShoot;
+            player.PlayerWeapon.StartedReloading += OnStartedReloading;
+            player.PlayerWeapon.StoppedReloading += OnStoppedReloading;
+            player.PlayerWeapon.ReloadingTimeChanged += OnReloadingTimeChanged;
+            _waveController.NewWaveStarted += OnWaveChanged;
+            _waveController.TimeToNewWaveChanged += OnWaveTimeChanged;
+            _waveController.EndOfWave += OnWaveEnded;
+
             _healthText.text = player.Stats.EntityData.Health.ToString();
             OnPlayerShoot();
         }
 
+        private void OnWaveEnded(int waveNumber)
+        {
+            _waveNumberText.text = ConvertEndOfWaveNumberToString(waveNumber);
+        }
+
+        private void OnWaveChanged(int waveNumber)
+        {
+            _waveNumberText.text = ConvertWaveNumberToString(waveNumber);
+        }
+
+        private void OnWaveTimeChanged(float timeInSeconds)
+        {
+            _timeToNextWaveText.text = ConvertTimeToString(timeInSeconds);
+        }
+
+        private void OnKillAmountChanged()
+        {
+            _amountOfKillsText.text = _player.GameStats.KillsAmount.ToString();
+        }
+
         private void OnReloadingTimeChanged(float reloadtimeLeft)
         {
-            _reloadingTimeText.text = ConvertToReloadingTime(reloadtimeLeft);
+            _reloadingTimeText.text = ConvertTimeToString(reloadtimeLeft);
         }
 
         private void OnStartedReloading(float reloadTime)
         {
             ChangeToReloadText();
-            _reloadingTimeText.text = ConvertToReloadingTime(reloadTime);
+            _reloadingTimeText.text = ConvertTimeToString(reloadTime);
         }
 
         private void OnStoppedReloading()
@@ -45,9 +76,7 @@ namespace MainGame
 
         private void OnPlayerShoot()
         {
-            var weaponWithBullets = _player.Weapon as WeaponWithBullets;
-
-            _weaponText.text = ConvertWeaponToString(weaponWithBullets);
+            _weaponText.text = ConvertWeaponToString(_player.PlayerWeapon);
         }
 
         private void ChangeToReloadText()
@@ -56,12 +85,12 @@ namespace MainGame
             _reloadingTimeText.gameObject.SetActive(true);
         }
 
-        private string ConvertToReloadingTime(float timeInSeconds)
+        private string ConvertTimeToString(float timeInSeconds)
         {
             int minutes = (int)(timeInSeconds / 60f);
             int seconds = (int)(timeInSeconds - 60f * minutes);
 
-            return $"{minutes}:{seconds.ToString("00")}";
+            return $"{minutes}:{seconds:00}";
         }
 
         private void ChangeToBulletsLeftText()
@@ -70,7 +99,7 @@ namespace MainGame
             _weaponText.gameObject.SetActive(true);
         }
 
-        private void OnPlayerHit(EntityHitStatus hitStatus)
+        private void OnPlayerWasHit(EntityHitStatus hitStatus)
         {
             _healthText.text = hitStatus.HealthRemained.ToString();
         }
@@ -78,6 +107,16 @@ namespace MainGame
         private string ConvertWeaponToString(WeaponWithBullets weapon)
         {
             return $"{weapon.Clip}/{weapon.InAmmo}";
+        }
+
+        private string ConvertWaveNumberToString(int waveNumber)
+        {
+            return $"Wave {waveNumber}";
+        }
+
+        private string ConvertEndOfWaveNumberToString(int waveNumber)
+        {
+            return $"Wave {waveNumber}-{waveNumber+1}";
         }
     }
 }

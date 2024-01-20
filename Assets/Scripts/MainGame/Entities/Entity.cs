@@ -7,22 +7,54 @@ namespace MainGame
 {
     public abstract class Entity : NetworkBehaviour
     {
-        [field: SerializeField] public Weapon Weapon { get; protected set; }
-        [SerializeField] public EntityStats Stats;
-        public bool IsRunning { get; protected set; }
+        [SerializeField] protected DeadCopy DeadCopy;
         private Health _health;
+        private Rigidbody2D _rigidbody;
 
-        public event Action<EntityHitStatus> Hit;
+        [field: SerializeField] public Weapon Weapon { get; protected set; }
+        [field: SerializeField] public EntityStats Stats { get; protected set; }
+        public bool IsRunning { get; protected set; }
+        public Health health => _health;
+
+        public event Action<EntityHitStatus> WasHit;
         public event Action<AnimationTriggers> AnimationTriggered;
+        public event Action<int> HealthAmountChanged;
+
+        private void OnCollisionExit2D(Collision2D collision)
+        {
+            _rigidbody.velocity = Vector3.zero;
+        }
+
+        protected virtual void Died()
+        {
+            Runner.Spawn(DeadCopy,
+                        transform.position,
+                        Quaternion.identity,
+                        Object.InputAuthority);
+
+            Runner.Despawn(Object);
+        }
 
         protected void Init()
         {
             _health = new Health(Stats.EntityData.Health);
+            _rigidbody = GetComponent<Rigidbody2D>();
+        }
+
+        protected void AddHealth(int health)
+        {
+            _health.AddHealth((uint)health);
+            HealthAmountChanged?.Invoke(_health.CurrentHealth);
         }
 
         public EntityHitStatus TakeDamage(uint damage)
         {
-            _health.TakeDamage((int)damage);
+            if (!HasInputAuthority)
+            {
+                return default;
+            }
+
+            _health.TakeDamage(damage);
 
             var hitStatus = new EntityHitStatus()
             {
@@ -31,22 +63,20 @@ namespace MainGame
                 Died = false
             };
 
-            if (HasInputAuthority)
+            if (!_health.IsAlive())
+            {
+                RPC_SendTrigger(AnimationTriggers.Died);
+
+                hitStatus.Died = true;
+                Died();
+            }
+            else
             {
                 RPC_SendTrigger(AnimationTriggers.Hit);
             }
 
-            if (!_health.IsAlive())
-            {
-                if (HasInputAuthority)
-                {
-                    RPC_SendTrigger(AnimationTriggers.Died);
-                }
-
-                hitStatus.Died = true;
-            }
-
-            Hit?.Invoke(hitStatus);
+            HealthAmountChanged?.Invoke(_health.CurrentHealth);
+            WasHit?.Invoke(hitStatus);
 
             return hitStatus;
         }
@@ -54,11 +84,11 @@ namespace MainGame
         [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority, HostMode = RpcHostMode.SourceIsHostPlayer)]
         protected void RPC_SendTrigger(AnimationTriggers trigger, RpcInfo info = default)
         {
-            RPC_RelayMessage(trigger, info.Source);
+            RPC_RelayTrigger(trigger, info.Source);
         }
 
         [Rpc(RpcSources.StateAuthority, RpcTargets.All, HostMode = RpcHostMode.SourceIsServer)]
-        protected void RPC_RelayMessage(AnimationTriggers trigger, PlayerRef messageSource)
+        protected void RPC_RelayTrigger(AnimationTriggers trigger, PlayerRef messageSource)
         {
             if (trigger == AnimationTriggers.StartedRunning)
             {

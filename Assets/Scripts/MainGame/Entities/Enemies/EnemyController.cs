@@ -47,6 +47,7 @@ namespace MainGame
         }
 
         protected abstract void Move();
+
         protected void UpdateTarget()
         {
             var player = PlayersContainer.GetNearestPlayer(transform);

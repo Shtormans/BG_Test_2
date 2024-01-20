@@ -19,7 +19,7 @@ namespace MainGame
             if (!IsGameAlreadyExist)
             {
                 IsGameAlreadyExist = true;
-                _waveController.SpawnNewWave();
+                _waveController.StartCreatingWaves();
             }
         }
     }

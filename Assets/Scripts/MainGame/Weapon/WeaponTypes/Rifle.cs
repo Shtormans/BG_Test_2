@@ -9,7 +9,8 @@
 
         protected override void OnHit(Entity entity)
         {
-            entity.TakeDamage((uint)Stats.Damage);
+            var hitStatus = entity.TakeDamage((uint)Stats.Damage);
+            TriggerHitEvent(hitStatus);
         }
 
         protected override void Fire()

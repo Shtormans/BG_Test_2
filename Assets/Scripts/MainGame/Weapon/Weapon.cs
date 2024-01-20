@@ -9,6 +9,7 @@ namespace MainGame
         [SerializeField] protected WeaponStats Stats;
         protected float _lastFireTime;
 
+        public event Action<EntityHitStatus> Hit;
         public event Action Fired;
 
         public override void Spawned()
@@ -23,17 +24,16 @@ namespace MainGame
 
         public virtual void Shoot()
         {
-            if (!HasStateAuthority)
-            {
-                return;
-            }
-
             if (!TimePassedBeforeNextShoot())
             {
                 return;
             }
 
-            Fire();
+            if (HasStateAuthority)
+            {
+                Fire(); 
+            }
+
             TriggerFireEvent();
 
             _lastFireTime = Time.time;
@@ -49,9 +49,9 @@ namespace MainGame
             return Time.time - _lastFireTime > Stats.FireRate;
         }
 
-        protected bool IsFriendlyFire(Entity entity)
+        protected void TriggerHitEvent(EntityHitStatus hitStatus)
         {
-            return entity.Weapon != this;
+            Hit?.Invoke(hitStatus);
         }
 
         protected abstract void Fire();

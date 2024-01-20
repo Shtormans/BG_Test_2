@@ -17,7 +17,7 @@ MonoBehaviour:
   TimeBeforeDisappear: 4
   BulletSpeed: 4
   InfiniteAmmo: 0
-  Clip: 4
-  StartAmount: 12
+  Clip: 8
+  StartAmount: 24
   ReloadTime: 4
   FireRate: 2

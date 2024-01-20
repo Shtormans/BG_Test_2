@@ -9,14 +9,20 @@ namespace MainGame
     {
         [SerializeField] private Transform _body;
         private PlayerMover _playerPhysics;
+        private PlayerGameStats _gameStats;
 
         [Networked] public PlayerBody PlayerBody { get; set; }
 
         public Transform Body => _body;
+        public WeaponWithBullets PlayerWeapon => Weapon as WeaponWithBullets;
+        public PlayerGameStats GameStats => _gameStats;
         public event Action<PlayerBehaviour> SpawnedEvent;
+        public event Action Killed;
 
         public override void Spawned()
         {
+            Init();
+
             _playerPhysics = GetComponent<PlayerMover>();
             new PlayersContainer().AddPlayer(this);
 
@@ -25,36 +31,63 @@ namespace MainGame
 
         public override void FixedUpdateNetwork()
         {
-            if (!HasStateAuthority)
+            if (!GetInput(out PlayerInputData data))
             {
                 return;
             }
 
-            if (GetInput(out PlayerInputData data))
+            if (HasStateAuthority)
             {
-                if (data.MoveDirection.x != 0 || data.MoveDirection.y != 0)
-                {
-                    _playerPhysics.Move(Stats.EntityData.Speed, data.MoveDirection, Runner.DeltaTime);
+                UseInputOnHost(data);
+            }
 
-                    if (!IsRunning)
-                    {
-                        RPC_SendTrigger(AnimationTriggers.StartedRunning);
-                    }
-                }
-                else
+            UseInputOnClients(data);
+        }
+
+        public void AddHealthBonus(int healthBonus)
+        {
+            AddHealth(healthBonus);
+        }
+
+        protected override void Died()
+        {
+            Runner.Spawn(DeadCopy,
+                        transform.position,
+                        Quaternion.identity,
+                        Object.InputAuthority);
+        }
+
+        private void UseInputOnHost(PlayerInputData inputData)
+        {
+            if (!inputData.MoveDirection.IsZero())
+            {
+                _playerPhysics.Move(Stats.EntityData.Speed, inputData.MoveDirection, Runner.DeltaTime);
+
+                if (!IsRunning)
                 {
-                    if (IsRunning)
-                    {
-                        RPC_SendTrigger(AnimationTriggers.StoppedRunning);
-                    }
+                    RPC_SendTrigger(AnimationTriggers.StartedRunning);
                 }
+            }
+            else
+            {
+                if (IsRunning)
+                {
+                    RPC_SendTrigger(AnimationTriggers.StoppedRunning);
+                }
+            }
 
 
-                if (data.NeedToRotate)
-                {
-                    Weapon.transform.rotation = data.RotateDirection;
-                    Weapon.Shoot();
-                }
+            if (!inputData.RotationDirection.IsZero())
+            {
+                Weapon.transform.rotation = inputData.RotationDirection;
+            }
+        }
+
+        private void UseInputOnClients(PlayerInputData inputData)
+        {
+            if (!inputData.RotationDirection.IsZero())
+            {
+                Weapon.Shoot();
             }
         }
 
@@ -66,6 +99,7 @@ namespace MainGame
         public void SetWeapon(Weapon weapon)
         {
             Weapon = weapon;
+            weapon.Hit += OnWeaponHit;
         }
 
         public void SetCamera(CinemachineVirtualCamera camera)
@@ -76,6 +110,17 @@ namespace MainGame
             }
 
             camera.Follow = transform;
+        }
+
+        public void OnWeaponHit(EntityHitStatus hitStatus)
+        {
+            _gameStats.DamageAmount += hitStatus.Damage;
+
+            if (hitStatus.Died)
+            {
+                _gameStats.KillsAmount++;
+                Killed?.Invoke();
+            }
         }
     }
 }

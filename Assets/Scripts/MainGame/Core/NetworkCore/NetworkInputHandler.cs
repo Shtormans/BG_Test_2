@@ -5,30 +5,31 @@ namespace MainGame
 {
     public class NetworkInputHandler : NetworkRunnerCallbacks
     {
+        [SerializeField] private FixedJoystick _movementJoystick;
+        [SerializeField] private FixedJoystick _rotationJoystick;
+        private IInputHandler _inputHandler;
+
+        private void Awake()
+        {
+#if UNITY_EDITOR
+            SetInputHandler(new KeyboardMouseInputHandler());
+#elif UNITY_ANDROID
+            SetInputHandler(new JoystickInputHandler(_movementJoystick, _rotationJoystick));
+#endif
+        }
+
+        private void SetInputHandler(IInputHandler inputHandler)
+        {
+            _inputHandler = inputHandler;
+        }
+
         public override void OnInput(NetworkRunner runner, NetworkInput input)
         {
-            var data = new PlayerInputData();
-
-            if (Input.GetKey(KeyCode.W))
-                data.MoveDirection += Vector2.up;
-
-            if (Input.GetKey(KeyCode.S))
-                data.MoveDirection += Vector2.down;
-
-            if (Input.GetKey(KeyCode.A))
-                data.MoveDirection += Vector2.left;
-
-            if (Input.GetKey(KeyCode.D))
-                data.MoveDirection += Vector2.right;
-
-            if (Input.GetMouseButton(0))
+            var data = new PlayerInputData
             {
-                var mouse_pos = Input.mousePosition;
-                var angle = Mathf.Atan2(mouse_pos.y, mouse_pos.x) * Mathf.Rad2Deg;
-                data.RotateDirection = Quaternion.Euler(0, 0, angle);
-
-                data.NeedToRotate = true;
-            }
+                MoveDirection = _inputHandler.GetDirection(),
+                RotationDirection = _inputHandler.GetRotation()
+            };
 
             input.Set(data);
         }

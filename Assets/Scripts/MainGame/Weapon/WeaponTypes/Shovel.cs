@@ -20,7 +20,7 @@ namespace MainGame
 
         private void OnTriggerEnter2D(Collider2D collision)
         {
-            if (collision.gameObject.TryGetComponent<Entity>(out var entity) && !IsFriendlyFire(entity))
+            if (collision.gameObject.TryGetComponent<Entity>(out var entity) && entity is PlayerBehaviour)
             {
                 OnHit(entity);
             }
@@ -28,7 +28,8 @@ namespace MainGame
 
         protected override void OnHit(Entity entity)
         {
-            entity.TakeDamage((uint)Stats.Damage);
+            var hitStatus = entity.TakeDamage((uint)Stats.Damage);
+            TriggerHitEvent(hitStatus);
         }
 
         protected override void Fire()

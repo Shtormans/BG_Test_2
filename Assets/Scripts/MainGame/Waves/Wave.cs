@@ -8,6 +8,7 @@ namespace MainGame
     public class Wave : ScriptableObject
     {
         public float WaveTime;
+        public float RestTimeBeforeNextWave;
 
         public List<EnemyPair> Enemies;
         public List<BonusPair> Bonuses;
