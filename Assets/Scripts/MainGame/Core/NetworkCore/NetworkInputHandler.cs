@@ -14,8 +14,9 @@ namespace MainGame
 #if UNITY_EDITOR
             SetInputHandler(new KeyboardMouseInputHandler());
 #elif UNITY_ANDROID
-            SetInputHandler(new JoystickInputHandler(_movementJoystick, _rotationJoystick));
+            SetInputHandler(new KeyboardMouseInputHandler());
 #endif
+            SetInputHandler(new JoystickInputHandler(_movementJoystick, _rotationJoystick));
         }
 
         private void SetInputHandler(IInputHandler inputHandler)

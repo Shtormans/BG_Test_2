@@ -44,6 +44,7 @@ namespace MainGame
             }
 
             _lastPosition = _entity.transform.position;
+            Debug.Log(transform.parent);
         }
 
         public void SetEntity(Entity entity)
@@ -56,7 +57,22 @@ namespace MainGame
 
         private void OnAnimationTriggered(AnimationTriggers trigger)
         {
-            _animator.SetTrigger(trigger.ToString());
+            switch (trigger)
+            {
+                case AnimationTriggers.Hit:
+                case AnimationTriggers.Died:
+                    _animator.SetTrigger(trigger.ToString());
+                    break;
+                case AnimationTriggers.StartedRunning:
+                    _animator.SetBool(AniationVariables.IsRunning, true);
+                    break;
+                case AnimationTriggers.StoppedRunning:
+                    _animator.SetBool(AniationVariables.IsRunning, false);
+                    break;
+                default:
+                    break;
+            }
+            
         }
     }
 }

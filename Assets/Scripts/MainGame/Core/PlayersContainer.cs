@@ -36,14 +36,15 @@ namespace MainGame
         private IEnumerator AwaitToBuildPlayer(PlayerBehaviour player)
         {
             yield return null;
-            
+
+            if (!player.HasStateAuthority)
+            {
+                _instance._playerFabric.UpdateSharedPlayer(player);
+            }
+
             if (player.HasInputAuthority)
             {
                 _instance._playerFabric.UpdateInputPlayer(player);
-            }
-            else
-            {
-                _instance._playerFabric.UpdateSharedPlayer(player);
             }
         }
 

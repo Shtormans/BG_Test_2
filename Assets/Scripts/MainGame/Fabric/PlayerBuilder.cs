@@ -21,7 +21,7 @@ namespace MainGame
 
         public PlayerBuilder AddWeapon(Weapon weapon)
         {
-            weapon.transform.parent = _player.Body.transform;
+            weapon.transform.position = _player.Body.transform.position;
             weapon.transform.parent = _player.Body.transform;
             weapon.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
             _player.SetWeapon(weapon);

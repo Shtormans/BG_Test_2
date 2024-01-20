@@ -25,8 +25,9 @@ namespace MainGame
             };
 
             player = PlayerBuilder.CreateBuilder(player)
-                .AddSkin(skin)
                 .AddPlayerBody(playerBody)
+                .AddSkin(skin)
+                .AddWeapon(weapon)
                 .Build();
 
             return player;
@@ -46,12 +47,13 @@ namespace MainGame
 
         public void UpdateInputPlayer(PlayerBehaviour player)
         {
-            UpdateSharedPlayer(player);
-
             PlayerBuilder.CreateBuilder(player)
                 .AddCamera(_virtualCamera)
                 .AddUIController(_playerStatsUIController)
                 .Build();
+
+            NetworkObjectsContainer.Instance.TryGetObjectById(player.PlayerBody.SpriteId, out AnimatedSkin skin);
+            Debug.Log(skin.transform.parent);
         }
     }
 }

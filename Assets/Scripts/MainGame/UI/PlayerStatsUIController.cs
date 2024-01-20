@@ -1,6 +1,7 @@
 using Fusion;
 using TMPro;
 using UnityEngine;
+using Zenject.SpaceFighter;
 
 namespace MainGame
 {
@@ -23,8 +24,8 @@ namespace MainGame
 
             player.WasHit += OnPlayerWasHit;
             player.Killed += OnKillAmountChanged;
-            var weapon = player.Weapon as WeaponWithBullets;
             player.PlayerWeapon.BulletsAmountChanged += OnPlayerShoot;
+            player.PlayerWeapon.Fired += OnPlayerShoot;
             player.PlayerWeapon.StartedReloading += OnStartedReloading;
             player.PlayerWeapon.StoppedReloading += OnStoppedReloading;
             player.PlayerWeapon.ReloadingTimeChanged += OnReloadingTimeChanged;
@@ -34,6 +35,20 @@ namespace MainGame
 
             _healthText.text = player.Stats.EntityData.Health.ToString();
             OnPlayerShoot();
+        }
+
+        private void OnDisable()
+        {
+            _player.WasHit -= OnPlayerWasHit;
+            _player.Killed -= OnKillAmountChanged;
+            _player.PlayerWeapon.BulletsAmountChanged -= OnPlayerShoot;
+            _player.PlayerWeapon.Fired -= OnPlayerShoot;
+            _player.PlayerWeapon.StartedReloading -= OnStartedReloading;
+            _player.PlayerWeapon.StoppedReloading -= OnStoppedReloading;
+            _player.PlayerWeapon.ReloadingTimeChanged -= OnReloadingTimeChanged;
+            _waveController.NewWaveStarted -= OnWaveChanged;
+            _waveController.TimeToNewWaveChanged -= OnWaveTimeChanged;
+            _waveController.EndOfWave -= OnWaveEnded;
         }
 
         private void OnWaveEnded(int waveNumber)
