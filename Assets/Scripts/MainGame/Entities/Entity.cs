@@ -27,6 +27,11 @@ namespace MainGame
 
         protected virtual void Died()
         {
+            if (!HasStateAuthority)
+            {
+                return;
+            }
+
             Runner.Spawn(DeadCopy,
                         transform.position,
                         Quaternion.identity,
@@ -48,6 +53,11 @@ namespace MainGame
 
         public EntityHitStatus TakeDamage(uint damage)
         {
+            if (!HasStateAuthority)
+            {
+                return default;
+            }
+
             _health.TakeDamage(damage);
 
             var hitStatus = new EntityHitStatus()
@@ -89,14 +99,14 @@ namespace MainGame
             AnimationTriggered?.Invoke(trigger);
         }
 
-        [Rpc(RpcSources.StateAuthority, RpcTargets.InputAuthority)]
+        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
         private void RPC_GotHitEvent(EntityHitStatus hitStatus, RpcInfo info = default)
         {
             HealthAmountChanged?.Invoke(_health.CurrentHealth);
             WasHit?.Invoke(hitStatus);
         }
 
-        [Rpc(RpcSources.StateAuthority, RpcTargets.InputAuthority)]
+        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
         private void RPC_HealthAdded(int health, RpcInfo info = default)
         {
             _health.AddHealth((uint)health);

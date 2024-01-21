@@ -59,9 +59,7 @@ namespace MainGame
         {
             if (runner.IsServer)
             {
-                // Create a unique position for the player
                 NetworkObject networkPlayerObject = _playerFabric.Create(runner, player).GetComponent<NetworkObject>();
-                // Keep track of the player avatars for easy access
                 _spawnedCharacters.Add(player, networkPlayerObject);
 
                 _currentPlayer = player;

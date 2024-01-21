@@ -21,30 +21,20 @@ namespace MainGame
 
         public PlayerBuilder AddWeapon(Weapon weapon)
         {
-            var networkTransform = weapon.gameObject.GetComponent<NetworkTransform>();
-            networkTransform.enabled = false;
-
             weapon.transform.parent = _player.Body.transform;
             weapon.transform.localPosition = Vector3.zero;
             weapon.transform.rotation = Quaternion.identity;
             _player.SetWeapon(weapon);
 
-            networkTransform.enabled = true;
-            
             return this;
         }
 
         public PlayerBuilder AddSkin(AnimatedSkin skin)
         {
-            var networkTransform = skin.gameObject.GetComponent<NetworkTransform>();
-            networkTransform.enabled = false;
-
             skin.SetEntity(_player);
             skin.transform.parent = _player.Body.transform;
             skin.transform.localPosition = Vector3.zero;
             skin.transform.rotation = Quaternion.identity;
-
-            networkTransform.enabled = true;
 
             return this;
         }
