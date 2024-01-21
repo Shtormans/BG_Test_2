@@ -2,6 +2,7 @@ using Cinemachine;
 using Fusion;
 using System;
 using UnityEngine;
+using static UnityEngine.EventSystems.EventTrigger;
 
 namespace MainGame
 {
@@ -31,6 +32,7 @@ namespace MainGame
 
         public override void FixedUpdateNetwork()
         {
+
             if (!GetInput(out PlayerInputData data))
             {
                 return;
@@ -79,7 +81,7 @@ namespace MainGame
 
             if (!inputData.RotationDirection.IsZero())
             {
-                Weapon.transform.rotation = inputData.RotationDirection;
+                Weapon.Rotate(inputData.RotationDirection);
             }
         }
 
@@ -104,11 +106,6 @@ namespace MainGame
 
         public void SetCamera(CinemachineVirtualCamera camera)
         {
-            if (!Object.HasInputAuthority)
-            {
-                return;
-            }
-
             camera.Follow = transform;
         }
 
@@ -119,8 +116,14 @@ namespace MainGame
             if (hitStatus.Died)
             {
                 _gameStats.KillsAmount++;
-                Killed?.Invoke();
+                RPC_HitEvent();
             }
+        }
+
+        [Rpc(RpcSources.StateAuthority, RpcTargets.InputAuthority)]
+        private void RPC_HitEvent(RpcInfo info = default)
+        {
+            Killed?.Invoke();
         }
     }
 }

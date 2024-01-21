@@ -16,13 +16,6 @@ namespace MainGame
         public NetworkRunner Runner => _runner;
         public PlayerRef CurrentPlayer => _currentPlayer;
 
-        public event Action HostJoined;
-
-        private void Awake()
-        {
-            
-        }
-
         private void OnGUI()
         {
             if (_runner == null)
@@ -60,8 +53,6 @@ namespace MainGame
                 Scene = scene,
                 SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>()
             });
-
-            HostJoined?.Invoke();
         }
 
         public override void OnPlayerJoined(NetworkRunner runner, PlayerRef player)

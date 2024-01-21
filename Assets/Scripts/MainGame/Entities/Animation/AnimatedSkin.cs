@@ -29,7 +29,7 @@ namespace MainGame
         }
 
 
-        private void Update()
+        public override void FixedUpdateNetwork()
         {
             if (_entity == null)
             {
@@ -44,7 +44,6 @@ namespace MainGame
             }
 
             _lastPosition = _entity.transform.position;
-            Debug.Log(transform.parent);
         }
 
         public void SetEntity(Entity entity)

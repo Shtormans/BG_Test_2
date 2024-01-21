@@ -11,8 +11,7 @@ GameObject:
   - component: {fileID: 3940813101218717982}
   - component: {fileID: 7397915881861689669}
   - component: {fileID: 5346247136512505656}
-  - component: {fileID: 6788586076079450507}
-  - component: {fileID: 4529002444759075501}
+  - component: {fileID: 1878644328817567925}
   m_Layer: 0
   m_Name: Shotgun
   m_TagString: Untagged
@@ -49,7 +48,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a0c5d38cfd644f43b13f66f46b5baa4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  angle: 0
   Stats: {fileID: 11400000, guid: d332cf13d2e60504f9ef8d963ab79b48, type: 2}
   BulletSpawner: {fileID: 9168195651493656280}
   _bulletsAmount: 3
@@ -72,8 +70,8 @@ MonoBehaviour:
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: 7397915881861689669}
-  - {fileID: 6788586076079450507}
---- !u!114 &6788586076079450507
+  - {fileID: 1878644328817567925}
+--- !u!114 &1878644328817567925
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -86,23 +84,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SyncScale: 0
-  SyncParent: 1
+  SyncParent: 0
   _autoAOIOverride: 1
   DisableSharedModeInterpolation: 0
---- !u!114 &4529002444759075501
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2059074104957719294}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 1541381998, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Guid:
-    RawGuidValue: 0490af8d1fba79c4f85b8dc184306441
 --- !u!1 &4980803062409396848
 GameObject:
   m_ObjectHideFlags: 0

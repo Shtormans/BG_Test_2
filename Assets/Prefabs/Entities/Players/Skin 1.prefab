@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 998904962290440192}
   - component: {fileID: 7860308455352738846}
   - component: {fileID: 3998217867766105466}
-  - component: {fileID: 7926119531672920382}
+  - component: {fileID: -6686807567503125072}
   m_Layer: 0
   m_Name: Skin 1
   m_TagString: Untagged
@@ -140,8 +140,8 @@ MonoBehaviour:
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: 7860308455352738846}
-  - {fileID: 7926119531672920382}
---- !u!114 &7926119531672920382
+  - {fileID: -6686807567503125072}
+--- !u!114 &-6686807567503125072
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -154,6 +154,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SyncScale: 0
-  SyncParent: 1
+  SyncParent: 0
   _autoAOIOverride: 1
   DisableSharedModeInterpolation: 0

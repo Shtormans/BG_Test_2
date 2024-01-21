@@ -23,6 +23,8 @@ namespace MainGame
 
         public void StartCreatingWaves()
         {
+            if (!HasStateAuthority) return;
+
             StartCoroutine(AwaitForNextWave());
         }
 
@@ -102,42 +104,24 @@ namespace MainGame
             }
         }
 
-        [Rpc(RpcSources.StateAuthority, RpcTargets.All, HostMode = RpcHostMode.SourceIsHostPlayer)]
+        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
         private void RPC_SendNewWaveEvent(int waveNumber, float waveTime, RpcInfo info = default)
         {
-            RPC_RelayNewWaveEvent(waveNumber, info.Source);
-            RPC_RelayTimeChangedEvent(waveTime, info.Source);
-        }
-
-        [Rpc(RpcSources.StateAuthority, RpcTargets.All, HostMode = RpcHostMode.SourceIsHostPlayer)]
-        private void RPC_SendTimeChangedEvent(float secondsToNewWave, RpcInfo info = default)
-        {
-            RPC_RelayTimeChangedEvent(secondsToNewWave, info.Source);
-        }
-
-        [Rpc(RpcSources.StateAuthority, RpcTargets.All, HostMode = RpcHostMode.SourceIsHostPlayer)]
-        private void RPC_SendEndOfWaveEvent(int waveNumber, float secondsToNewWave, RpcInfo info = default)
-        {
-            RPC_RelayEndOfWaveEvent(waveNumber, info.Source);
-            RPC_RelayTimeChangedEvent(_waveContainer.CurrentWave.RestTimeBeforeNextWave, info.Source);
-        }
-
-        [Rpc(RpcSources.StateAuthority, RpcTargets.All, HostMode = RpcHostMode.SourceIsServer)]
-        private void RPC_RelayNewWaveEvent(int waveNumber, PlayerRef messageSource)
-        {
             NewWaveStarted?.Invoke(waveNumber);
+            TimeToNewWaveChanged?.Invoke(waveTime);
         }
 
-        [Rpc(RpcSources.StateAuthority, RpcTargets.All, HostMode = RpcHostMode.SourceIsServer)]
-        private void RPC_RelayTimeChangedEvent(float secondsToNewWave, PlayerRef messageSource)
+        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+        private void RPC_SendTimeChangedEvent(float secondsToNewWave, RpcInfo info = default)
         {
             TimeToNewWaveChanged?.Invoke(secondsToNewWave);
         }
 
-        [Rpc(RpcSources.StateAuthority, RpcTargets.All, HostMode = RpcHostMode.SourceIsServer)]
-        private void RPC_RelayEndOfWaveEvent(int currentWave, PlayerRef messageSource)
+        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+        private void RPC_SendEndOfWaveEvent(int waveNumber, float secondsToNewWave, RpcInfo info = default)
         {
-            EndOfWave?.Invoke(currentWave);
+            EndOfWave?.Invoke(waveNumber);
+            TimeToNewWaveChanged?.Invoke(secondsToNewWave);
         }
     }
 }

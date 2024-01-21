@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,6 +11,7 @@ namespace MainGame
         [SerializeField] private PlayerFabric _playerFabric;
 
         private static PlayersContainer _instance;
+        public static event Action<PlayerBehaviour> PlayerSpawned;
 
         private void Awake()
         {
@@ -25,27 +27,7 @@ namespace MainGame
         {
             _instance._players.Add(player);
 
-            player.SpawnedEvent += OnPlayerSpawned;
-        }
-
-        private void OnPlayerSpawned(PlayerBehaviour player)
-        {
-            _instance.StartCoroutine(AwaitToBuildPlayer(player));
-        }
-
-        private IEnumerator AwaitToBuildPlayer(PlayerBehaviour player)
-        {
-            yield return null;
-
-            if (!player.HasStateAuthority)
-            {
-                _instance._playerFabric.UpdateSharedPlayer(player);
-            }
-
-            if (player.HasInputAuthority)
-            {
-                _instance._playerFabric.UpdateInputPlayer(player);
-            }
+            PlayerSpawned?.Invoke(player);
         }
 
         public PlayerBehaviour GetNearestPlayer(Transform value)

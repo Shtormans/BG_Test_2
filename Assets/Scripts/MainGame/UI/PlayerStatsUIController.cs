@@ -1,7 +1,5 @@
-using Fusion;
 using TMPro;
 using UnityEngine;
-using Zenject.SpaceFighter;
 
 namespace MainGame
 {

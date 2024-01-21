@@ -126,8 +126,7 @@ GameObject:
   - component: {fileID: 4984886366594074008}
   - component: {fileID: 8428959210715194386}
   - component: {fileID: 8580562376523327674}
-  - component: {fileID: 3489410518815481162}
-  - component: {fileID: 7930017727123598017}
+  - component: {fileID: 3289924212651605214}
   m_Layer: 0
   m_Name: SawedOff
   m_TagString: Untagged
@@ -164,7 +163,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3ca80cabfd11334489d6548ef5ae1b64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  angle: 0
   Stats: {fileID: 11400000, guid: 22671082d659fc847886208c12f2b762, type: 2}
   BulletSpawner: {fileID: 3870995239702509334}
 --- !u!114 &8580562376523327674
@@ -185,8 +183,8 @@ MonoBehaviour:
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: 8428959210715194386}
-  - {fileID: 3489410518815481162}
---- !u!114 &3489410518815481162
+  - {fileID: 3289924212651605214}
+--- !u!114 &3289924212651605214
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -199,20 +197,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SyncScale: 0
-  SyncParent: 1
+  SyncParent: 0
   _autoAOIOverride: 1
   DisableSharedModeInterpolation: 0
---- !u!114 &7930017727123598017
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8586320060190194074}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 1541381998, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Guid:
-    RawGuidValue: 1d662365cc8f9354f81dcd6f290c6ddf

@@ -22,6 +22,11 @@ namespace MainGame
             _lastFireTime = -Stats.FireRate;
         }
 
+        public void Rotate(Quaternion rotation)
+        {
+            RPC_RotateWeapon(rotation);
+        }
+
         public virtual void Shoot()
         {
             if (!TimePassedBeforeNextShoot())
@@ -31,7 +36,7 @@ namespace MainGame
 
             if (HasStateAuthority)
             {
-                Fire(); 
+                Fire();
             }
 
             TriggerFireEvent();
@@ -56,5 +61,11 @@ namespace MainGame
 
         protected abstract void Fire();
         protected abstract void OnHit(Entity entity);
+
+        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+        private void RPC_RotateWeapon(Quaternion rotation, RpcInfo info = default)
+        {
+            transform.rotation = rotation;
+        }
     }
 }

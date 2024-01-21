@@ -36,7 +36,6 @@ namespace MainGame
         public void UpdateSharedPlayer(PlayerBehaviour player)
         {
             NetworkObjectsContainer.Instance.TryGetObjectById(player.PlayerBody.WeaponId, out Weapon weapon);
-
             NetworkObjectsContainer.Instance.TryGetObjectById(player.PlayerBody.SpriteId, out AnimatedSkin skin);
 
             PlayerBuilder.CreateBuilder(player)
@@ -53,7 +52,12 @@ namespace MainGame
                 .Build();
 
             NetworkObjectsContainer.Instance.TryGetObjectById(player.PlayerBody.SpriteId, out AnimatedSkin skin);
-            Debug.Log(skin.transform.parent);
+        }
+
+        public bool IsAllPlayerPartsSpawned(PlayerBehaviour player)
+        {
+            return NetworkObjectsContainer.Instance.TryGetObjectById(player.PlayerBody.WeaponId, out Weapon _)
+                && NetworkObjectsContainer.Instance.TryGetObjectById(player.PlayerBody.SpriteId, out AnimatedSkin _);
         }
     }
 }

@@ -126,8 +126,7 @@ GameObject:
   - component: {fileID: 5408122392226335157}
   - component: {fileID: 5334751992021917879}
   - component: {fileID: 3348976062660273831}
-  - component: {fileID: 5505540283860539668}
-  - component: {fileID: -9074693426160368508}
+  - component: {fileID: 231492570061495759}
   m_Layer: 0
   m_Name: Rifle
   m_TagString: Untagged
@@ -164,7 +163,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0128f663fd7287447bd45d06d55de770, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  angle: 0
   Stats: {fileID: 11400000, guid: c569d42f431e45d4aa39668e50427051, type: 2}
   BulletSpawner: {fileID: 2822875574999649704}
 --- !u!114 &3348976062660273831
@@ -185,8 +183,8 @@ MonoBehaviour:
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: 5334751992021917879}
-  - {fileID: 5505540283860539668}
---- !u!114 &5505540283860539668
+  - {fileID: 231492570061495759}
+--- !u!114 &231492570061495759
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -199,20 +197,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SyncScale: 0
-  SyncParent: 1
+  SyncParent: 0
   _autoAOIOverride: 1
   DisableSharedModeInterpolation: 0
---- !u!114 &-9074693426160368508
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7716183636536253494}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 1541381998, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Guid:
-    RawGuidValue: 0ff43f4d32c97f645869ec9d729f6c26

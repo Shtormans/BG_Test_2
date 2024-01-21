@@ -43,17 +43,11 @@ namespace MainGame
 
         protected void AddHealth(int health)
         {
-            _health.AddHealth((uint)health);
-            HealthAmountChanged?.Invoke(_health.CurrentHealth);
+            RPC_HealthAdded(health);
         }
 
         public EntityHitStatus TakeDamage(uint damage)
         {
-            if (!HasInputAuthority)
-            {
-                return default;
-            }
-
             _health.TakeDamage(damage);
 
             var hitStatus = new EntityHitStatus()
@@ -75,20 +69,13 @@ namespace MainGame
                 RPC_SendTrigger(AnimationTriggers.Hit);
             }
 
-            HealthAmountChanged?.Invoke(_health.CurrentHealth);
-            WasHit?.Invoke(hitStatus);
+            RPC_GotHitEvent(hitStatus);
 
             return hitStatus;
         }
 
-        [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority, HostMode = RpcHostMode.SourceIsHostPlayer)]
+        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
         protected void RPC_SendTrigger(AnimationTriggers trigger, RpcInfo info = default)
-        {
-            RPC_RelayTrigger(trigger, info.Source);
-        }
-
-        [Rpc(RpcSources.StateAuthority, RpcTargets.All, HostMode = RpcHostMode.SourceIsServer)]
-        protected void RPC_RelayTrigger(AnimationTriggers trigger, PlayerRef messageSource)
         {
             if (trigger == AnimationTriggers.StartedRunning)
             {
@@ -100,6 +87,20 @@ namespace MainGame
             }
 
             AnimationTriggered?.Invoke(trigger);
+        }
+
+        [Rpc(RpcSources.StateAuthority, RpcTargets.InputAuthority)]
+        private void RPC_GotHitEvent(EntityHitStatus hitStatus, RpcInfo info = default)
+        {
+            HealthAmountChanged?.Invoke(_health.CurrentHealth);
+            WasHit?.Invoke(hitStatus);
+        }
+
+        [Rpc(RpcSources.StateAuthority, RpcTargets.InputAuthority)]
+        private void RPC_HealthAdded(int health, RpcInfo info = default)
+        {
+            _health.AddHealth((uint)health);
+            HealthAmountChanged?.Invoke(_health.CurrentHealth);
         }
     }
 }
