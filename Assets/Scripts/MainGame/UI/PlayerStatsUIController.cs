@@ -1,5 +1,7 @@
+using System.Security.Cryptography;
 using TMPro;
 using UnityEngine;
+using Zenject.SpaceFighter;
 
 namespace MainGame
 {
@@ -22,6 +24,7 @@ namespace MainGame
 
             player.WasHit += OnPlayerWasHit;
             player.Killed += OnKillAmountChanged;
+            _player.HealthAmountChanged += OnHealthAmountChanged;
             player.PlayerWeapon.BulletsAmountChanged += OnPlayerShoot;
             player.PlayerWeapon.Fired += OnPlayerShoot;
             player.PlayerWeapon.StartedReloading += OnStartedReloading;
@@ -39,6 +42,7 @@ namespace MainGame
         {
             _player.WasHit -= OnPlayerWasHit;
             _player.Killed -= OnKillAmountChanged;
+            _player.HealthAmountChanged -= OnHealthAmountChanged;
             _player.PlayerWeapon.BulletsAmountChanged -= OnPlayerShoot;
             _player.PlayerWeapon.Fired -= OnPlayerShoot;
             _player.PlayerWeapon.StartedReloading -= OnStartedReloading;
@@ -47,6 +51,11 @@ namespace MainGame
             _waveController.NewWaveStarted -= OnWaveChanged;
             _waveController.TimeToNewWaveChanged -= OnWaveTimeChanged;
             _waveController.EndOfWave -= OnWaveEnded;
+        }
+
+        private void OnHealthAmountChanged(int healthAmount)
+        {
+            _healthText.text = healthAmount.ToString();
         }
 
         private void OnWaveEnded(int waveNumber)
@@ -92,6 +101,11 @@ namespace MainGame
             _weaponText.text = ConvertWeaponToString(_player.PlayerWeapon);
         }
 
+        private void OnPlayerWasHit(EntityHitStatus hitStatus)
+        {
+            _healthText.text = hitStatus.HealthRemained.ToString();
+        }
+
         private void ChangeToReloadText()
         {
             _weaponText.gameObject.SetActive(false);
@@ -110,11 +124,6 @@ namespace MainGame
         {
             _reloadingTimeText.gameObject.SetActive(false);
             _weaponText.gameObject.SetActive(true);
-        }
-
-        private void OnPlayerWasHit(EntityHitStatus hitStatus)
-        {
-            _healthText.text = hitStatus.HealthRemained.ToString();
         }
 
         private string ConvertWeaponToString(WeaponWithBullets weapon)

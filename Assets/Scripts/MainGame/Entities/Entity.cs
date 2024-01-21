@@ -48,6 +48,11 @@ namespace MainGame
 
         protected void AddHealth(int health)
         {
+            if (!HasStateAuthority)
+            {
+                return;
+            }
+
             RPC_HealthAdded(health);
         }
 
@@ -72,14 +77,15 @@ namespace MainGame
                 RPC_SendTrigger(AnimationTriggers.Died);
 
                 hitStatus.Died = true;
+                RPC_GotHitEvent(hitStatus);
+
                 Died();
             }
             else
             {
                 RPC_SendTrigger(AnimationTriggers.Hit);
+                RPC_GotHitEvent(hitStatus);
             }
-
-            RPC_GotHitEvent(hitStatus);
 
             return hitStatus;
         }

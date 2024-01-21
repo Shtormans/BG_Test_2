@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Fusion;
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -33,7 +34,7 @@ namespace MainGame
         public void AddClips(int clips)
         {
             _inAmmo += clips * Stats.Clip;
-            BulletsAmountChanged?.Invoke();
+            RPC_BulletsAmountChanged();
         }
 
         public void CreateBullet(Vector3 position, Quaternion direction)
@@ -79,7 +80,7 @@ namespace MainGame
         {
             if (_clip == 0 && _inAmmo > 0)
             {
-                StartedReloading?.Invoke(Stats.ReloadTime);
+                RPC_StartedReloading(Stats.ReloadTime);
                 Reload();
             }
         }
@@ -99,7 +100,7 @@ namespace MainGame
                 yield return new WaitForSeconds(_timeBetweenReloading);
 
                 timePassed += _timeBetweenReloading;
-                ReloadingTimeChanged?.Invoke(Stats.ReloadTime - timePassed);
+                RPC_ReloadingTimeChanged(Stats.ReloadTime - timePassed);
             }
 
             if (_inAmmo - Stats.Clip < 0)
@@ -114,6 +115,30 @@ namespace MainGame
             }
 
             _isReloading = false;
+            RPC_StoppedReloading();
+        }
+
+        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+        private void RPC_BulletsAmountChanged(RpcInfo info = default)
+        {
+            BulletsAmountChanged?.Invoke();
+        }
+
+        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+        private void RPC_StartedReloading(float reloadingTime, RpcInfo info = default)
+        {
+            StartedReloading?.Invoke(reloadingTime);
+        }
+
+        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+        private void RPC_ReloadingTimeChanged(float reloadingTime, RpcInfo info = default)
+        {
+            ReloadingTimeChanged?.Invoke(reloadingTime);
+        }
+
+        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+        private void RPC_StoppedReloading(RpcInfo info = default)
+        {
             StoppedReloading?.Invoke();
         }
     }

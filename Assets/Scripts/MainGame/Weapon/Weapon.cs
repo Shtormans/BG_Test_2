@@ -46,7 +46,7 @@ namespace MainGame
 
         protected void TriggerFireEvent()
         {
-            Fired?.Invoke();
+            RPC_Fire();
         }
 
         protected bool TimePassedBeforeNextShoot()
@@ -56,7 +56,7 @@ namespace MainGame
 
         protected void TriggerHitEvent(EntityHitStatus hitStatus)
         {
-            Hit?.Invoke(hitStatus);
+            RPC_Hit(hitStatus);
         }
 
         protected abstract void Fire();
@@ -66,6 +66,18 @@ namespace MainGame
         private void RPC_RotateWeapon(Quaternion rotation, RpcInfo info = default)
         {
             transform.rotation = rotation;
+        }
+
+        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+        private void RPC_Fire(RpcInfo info = default)
+        {
+            Fired?.Invoke();
+        }
+
+        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+        private void RPC_Hit(EntityHitStatus hitStatus, RpcInfo info = default)
+        {
+            Hit?.Invoke(hitStatus);
         }
     }
 }

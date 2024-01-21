@@ -116,12 +116,12 @@ namespace MainGame
             if (hitStatus.Died)
             {
                 _gameStats.KillsAmount++;
-                RPC_HitEvent();
+                RPC_KilledEvent();
             }
         }
 
-        [Rpc(RpcSources.StateAuthority, RpcTargets.InputAuthority)]
-        private void RPC_HitEvent(RpcInfo info = default)
+        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+        private void RPC_KilledEvent(RpcInfo info = default)
         {
             Killed?.Invoke();
         }
