@@ -46,11 +46,6 @@ namespace MainGame
             return this;
         }
 
-        public PlayerBuilder AddJoysticks()
-        {
-            return this;
-        }
-
         public PlayerBuilder AddPlayerBody(PlayerBody playerBody)
         {
             _player.SetPlayerData(playerBody);

@@ -1,8 +1,9 @@
-﻿using Fusion;
+﻿using Cinemachine;
+using Fusion;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
+using Zenject;
 
 namespace MainGame
 {
@@ -10,13 +11,20 @@ namespace MainGame
     {
         [SerializeField] private WaveController _waveController;
         [SerializeField] private PlayerFabric _playerFabric;
+        [SerializeField] private CinemachineVirtualCamera _camera;
+        [SerializeField] private EnemyContainer _enemyContainer;
 
         [SerializeField] private List<GameObject> _awakeOnGameStartsObjects;
         [SerializeField] private Canvas _loadingCanvas;
+        [SerializeField] private Canvas _gameUI;
+        [SerializeField] private Canvas _gameEndScreen;
+
+        [Inject]
+        private PlayersContainer _playersContainer;
 
         public void Awake()
         {
-            PlayersContainer.PlayerSpawned += StartGame;
+            _playersContainer.PlayerSpawned += StartGame;
         }
 
         private void OnEnable()
@@ -24,10 +32,33 @@ namespace MainGame
             _loadingCanvas.gameObject.SetActive(true);
         }
 
+        public void OnPlayerDied()
+        {
+            if (_playersContainer.PlayersCount > 0)
+            {
+                _camera.Follow = _playersContainer.FirstPlayer.transform;
+            }
+            else
+            {
+                FinishGame();
+            }
+        }
+
+        private void FinishGame()
+        {
+            if (HasStateAuthority)
+            {
+                _enemyContainer.DisabeBrains();
+            }
+
+            _gameUI.gameObject.SetActive(false);
+            _gameEndScreen.gameObject.SetActive(true);
+        }
+
         private void StartGame(PlayerBehaviour player)
         {
-            PlayersContainer.PlayerSpawned -= StartGame;
-            PlayersContainer.PlayerSpawned += BuildPlayer;
+            _playersContainer.PlayerSpawned -= StartGame;
+            _playersContainer.PlayerSpawned += BuildPlayer;
 
             AwakeGame();
             BuildPlayer(player);
@@ -57,10 +88,7 @@ namespace MainGame
         {
             yield return new WaitUntil(() => _playerFabric.IsAllPlayerPartsSpawned(player));
 
-            if (!player.HasStateAuthority)
-            {
-                _playerFabric.UpdateSharedPlayer(player);
-            }
+            _playerFabric.UpdateSharedPlayer(player);
 
             if (player.HasInputAuthority)
             {

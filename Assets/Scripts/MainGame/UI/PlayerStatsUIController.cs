@@ -16,46 +16,44 @@ namespace MainGame
 
         [SerializeField] private WaveController _waveController;
 
-        private PlayerBehaviour _player;
+        private PlayerRPCHandler _rpcHandler;
 
         public void SetPlayer(PlayerBehaviour player)
         {
-            _player = player;
+            _rpcHandler = player.RpcHandler;
 
-            player.WasHit += OnPlayerWasHit;
-            player.Killed += OnKillAmountChanged;
-            _player.HealthAmountChanged += OnHealthAmountChanged;
-            player.PlayerWeapon.BulletsAmountChanged += OnPlayerShoot;
-            player.PlayerWeapon.Fired += OnPlayerShoot;
-            player.PlayerWeapon.StartedReloading += OnStartedReloading;
-            player.PlayerWeapon.StoppedReloading += OnStoppedReloading;
-            player.PlayerWeapon.ReloadingTimeChanged += OnReloadingTimeChanged;
+            _rpcHandler.PlayerWasHit += OnPlayerWasHit;
+            _rpcHandler.PlayerKilled += OnKillAmountChanged;
+            _rpcHandler.PlayerHealthAmountChanged += OnHealthAmountChanged;
+            _rpcHandler.PlayerWeaponBulletsAmountChanged += OnPlayerShoot;
+            _rpcHandler.PlayerWeaponStartedReloading += OnStartedReloading;
+            _rpcHandler.PlayerWeaponStoppedReloading += OnStoppedReloading;
+            _rpcHandler.PlayerWeaponReloadingTimeChanged += OnReloadingTimeChanged;
             _waveController.NewWaveStarted += OnWaveChanged;
             _waveController.TimeToNewWaveChanged += OnWaveTimeChanged;
             _waveController.EndOfWave += OnWaveEnded;
 
-            _healthText.text = player.Stats.EntityData.Health.ToString();
-            OnPlayerShoot();
+            _rpcHandler.UseCurrentPlayerHealthStatusRPC();
+            _rpcHandler.UseCurrentWeaponBulletsStatusRPC();
         }
 
         private void OnDisable()
         {
-            _player.WasHit -= OnPlayerWasHit;
-            _player.Killed -= OnKillAmountChanged;
-            _player.HealthAmountChanged -= OnHealthAmountChanged;
-            _player.PlayerWeapon.BulletsAmountChanged -= OnPlayerShoot;
-            _player.PlayerWeapon.Fired -= OnPlayerShoot;
-            _player.PlayerWeapon.StartedReloading -= OnStartedReloading;
-            _player.PlayerWeapon.StoppedReloading -= OnStoppedReloading;
-            _player.PlayerWeapon.ReloadingTimeChanged -= OnReloadingTimeChanged;
+            _rpcHandler.PlayerWasHit -= OnPlayerWasHit;
+            _rpcHandler.PlayerKilled -= OnKillAmountChanged;
+            _rpcHandler.PlayerHealthAmountChanged -= OnHealthAmountChanged;
+            _rpcHandler.PlayerWeaponBulletsAmountChanged -= OnPlayerShoot;
+            _rpcHandler.PlayerWeaponStartedReloading -= OnStartedReloading;
+            _rpcHandler.PlayerWeaponStoppedReloading -= OnStoppedReloading;
+            _rpcHandler.PlayerWeaponReloadingTimeChanged -= OnReloadingTimeChanged;
             _waveController.NewWaveStarted -= OnWaveChanged;
             _waveController.TimeToNewWaveChanged -= OnWaveTimeChanged;
             _waveController.EndOfWave -= OnWaveEnded;
         }
 
-        private void OnHealthAmountChanged(int healthAmount)
+        private void OnHealthAmountChanged(Health health)
         {
-            _healthText.text = healthAmount.ToString();
+            _healthText.text = health.CurrentHealth.ToString();
         }
 
         private void OnWaveEnded(int waveNumber)
@@ -73,9 +71,9 @@ namespace MainGame
             _timeToNextWaveText.text = ConvertTimeToString(timeInSeconds);
         }
 
-        private void OnKillAmountChanged()
+        private void OnKillAmountChanged(PlayerGameStats gameStats)
         {
-            _amountOfKillsText.text = _player.GameStats.KillsAmount.ToString();
+            _amountOfKillsText.text = gameStats.KillsAmount.ToString();
         }
 
         private void OnReloadingTimeChanged(float reloadtimeLeft)
@@ -93,12 +91,12 @@ namespace MainGame
         {
             ChangeToBulletsLeftText();
 
-            OnPlayerShoot();
+            _rpcHandler.UseCurrentWeaponBulletsStatusRPC();
         }
 
-        private void OnPlayerShoot()
+        private void OnPlayerShoot(WeaponBulletStatus bulletStatus)
         {
-            _weaponText.text = ConvertWeaponToString(_player.PlayerWeapon);
+            _weaponText.text = ConvertWeaponToString(bulletStatus);
         }
 
         private void OnPlayerWasHit(EntityHitStatus hitStatus)
@@ -126,9 +124,9 @@ namespace MainGame
             _weaponText.gameObject.SetActive(true);
         }
 
-        private string ConvertWeaponToString(WeaponWithBullets weapon)
+        private string ConvertWeaponToString(WeaponBulletStatus bulletStatus)
         {
-            return $"{weapon.Clip}/{weapon.InAmmo}";
+            return $"{bulletStatus.InClip}/{bulletStatus.InAmmo}";
         }
 
         private string ConvertWaveNumberToString(int waveNumber)

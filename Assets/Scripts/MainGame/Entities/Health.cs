@@ -1,6 +1,8 @@
-﻿namespace MainGame
+﻿using Fusion;
+
+namespace MainGame
 {
-    public struct Health
+    public struct Health : INetworkStruct
     {
         private int _maxHealth;
         private int _currentHealth;

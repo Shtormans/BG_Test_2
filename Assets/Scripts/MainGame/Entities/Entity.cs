@@ -14,18 +14,18 @@ namespace MainGame
         [field: SerializeField] public Weapon Weapon { get; protected set; }
         [field: SerializeField] public EntityStats Stats { get; protected set; }
         public bool IsRunning { get; protected set; }
-        public Health health => _health;
+        public Health Health => _health;
 
         public event Action<EntityHitStatus> WasHit;
         public event Action<AnimationTriggers> AnimationTriggered;
-        public event Action<int> HealthAmountChanged;
+        public event Action<Health> HealthAmountChanged;
 
         private void OnCollisionExit2D(Collision2D collision)
         {
             _rigidbody.velocity = Vector3.zero;
         }
 
-        protected virtual void Died()
+        protected virtual void OnDied()
         {
             if (!HasStateAuthority)
             {
@@ -53,7 +53,8 @@ namespace MainGame
                 return;
             }
 
-            RPC_HealthAdded(health);
+            _health.AddHealth((uint)health);
+            HealthAmountChanged?.Invoke(_health);
         }
 
         public EntityHitStatus TakeDamage(uint damage)
@@ -77,14 +78,16 @@ namespace MainGame
                 RPC_SendTrigger(AnimationTriggers.Died);
 
                 hitStatus.Died = true;
-                RPC_GotHitEvent(hitStatus);
+                HealthAmountChanged?.Invoke(Health);
+                WasHit?.Invoke(hitStatus);
 
-                Died();
+                OnDied();
             }
             else
             {
                 RPC_SendTrigger(AnimationTriggers.Hit);
-                RPC_GotHitEvent(hitStatus);
+                HealthAmountChanged?.Invoke(Health);
+                WasHit?.Invoke(hitStatus);
             }
 
             return hitStatus;
@@ -103,20 +106,6 @@ namespace MainGame
             }
 
             AnimationTriggered?.Invoke(trigger);
-        }
-
-        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-        private void RPC_GotHitEvent(EntityHitStatus hitStatus, RpcInfo info = default)
-        {
-            HealthAmountChanged?.Invoke(_health.CurrentHealth);
-            WasHit?.Invoke(hitStatus);
-        }
-
-        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-        private void RPC_HealthAdded(int health, RpcInfo info = default)
-        {
-            _health.AddHealth((uint)health);
-            HealthAmountChanged?.Invoke(_health.CurrentHealth);
         }
     }
 }

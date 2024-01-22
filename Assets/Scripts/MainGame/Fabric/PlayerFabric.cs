@@ -1,6 +1,7 @@
 ﻿using Cinemachine;
 using Fusion;
 using UnityEngine;
+using Zenject;
 
 namespace MainGame
 {
@@ -12,11 +13,14 @@ namespace MainGame
         [SerializeField] private CinemachineVirtualCamera _virtualCamera;
         [SerializeField] private PlayerStatsUIController _playerStatsUIController;
 
+        [Inject]
+        private NetworkObjectsContainer _networkObjectsContainer;
+
         public PlayerBehaviour Create(NetworkRunner runner, PlayerRef inputAuthority)
         {
             var player = runner.Spawn(prefab, inputAuthority: inputAuthority);
             var weapon = runner.Spawn(_weaponsContainer.TakeUniqueWeapon(), inputAuthority: inputAuthority);
-            var skin = runner.Spawn(_skinsContainer.TakeUniqueSkin(), inputAuthority: inputAuthority);
+            var skin = runner.Spawn(_skinsContainer.TakeSkin(), inputAuthority: inputAuthority);
 
             var playerBody = new PlayerBody()
             {
@@ -26,8 +30,6 @@ namespace MainGame
 
             player = PlayerBuilder.CreateBuilder(player)
                 .AddPlayerBody(playerBody)
-                .AddSkin(skin)
-                .AddWeapon(weapon)
                 .Build();
 
             return player;
@@ -35,12 +37,12 @@ namespace MainGame
 
         public void UpdateSharedPlayer(PlayerBehaviour player)
         {
-            NetworkObjectsContainer.Instance.TryGetObjectById(player.PlayerBody.WeaponId, out Weapon weapon);
-            NetworkObjectsContainer.Instance.TryGetObjectById(player.PlayerBody.SpriteId, out AnimatedSkin skin);
+            _networkObjectsContainer.TryGetObjectById(player.PlayerBody.WeaponId, out Weapon weapon);
+            _networkObjectsContainer.TryGetObjectById(player.PlayerBody.SpriteId, out AnimatedSkin skin);
 
             PlayerBuilder.CreateBuilder(player)
-                .AddWeapon(weapon)
                 .AddSkin(skin)
+                .AddWeapon(weapon)
                 .Build();
         }
 
@@ -51,13 +53,13 @@ namespace MainGame
                 .AddUIController(_playerStatsUIController)
                 .Build();
 
-            NetworkObjectsContainer.Instance.TryGetObjectById(player.PlayerBody.SpriteId, out AnimatedSkin skin);
+            _networkObjectsContainer.TryGetObjectById(player.PlayerBody.SpriteId, out AnimatedSkin skin);
         }
 
         public bool IsAllPlayerPartsSpawned(PlayerBehaviour player)
         {
-            return NetworkObjectsContainer.Instance.TryGetObjectById(player.PlayerBody.WeaponId, out Weapon _)
-                && NetworkObjectsContainer.Instance.TryGetObjectById(player.PlayerBody.SpriteId, out AnimatedSkin _);
+            return _networkObjectsContainer.TryGetObjectById(player.PlayerBody.WeaponId, out Weapon _)
+                && _networkObjectsContainer.TryGetObjectById(player.PlayerBody.SpriteId, out AnimatedSkin _);
         }
     }
 }

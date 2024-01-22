@@ -6,8 +6,8 @@ namespace MainGame
 {
     public class EnemyFabric : MonoBehaviour
     {
-        [SerializeField] private PlayersContainer _playersContainer;
         [SerializeField] private NetworkSpawner _networkSpawner;
+        [SerializeField] private EnemyContainer _enemyContainer;
 
         public List<EnemyController> CreateWave(Wave wave)
         {
@@ -18,9 +18,9 @@ namespace MainGame
                 for (int i = 0; i < item.Amount; i++)
                 {
                     var enemy = Spawn(item.Enemy);
-                    enemy.SetPlayersContainer(_playersContainer);
-                    
                     enemies.Add(enemy);
+
+                    _enemyContainer.AddEnemy(enemy);
                 }
             }
 

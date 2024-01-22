@@ -6,8 +6,7 @@ namespace MainMenu
     {
         [SerializeField] private Canvas _mainMenu;
         [SerializeField] private Canvas _skinMenu;
-        [SerializeField] private Canvas _createRoom;
-        [SerializeField] private Canvas _joinRoom;
+        [SerializeField] private Canvas _roomMenu;
 
         private Canvas _activeCanvas;
 
@@ -16,14 +15,9 @@ namespace MainMenu
             _activeCanvas = _mainMenu;
         }
 
-        public void ToJoinRoom()
+        public void ToRoomMenu()
         {
-            ChangeCanvas(_joinRoom);
-        }
-
-        public void ToCreateRoom()
-        {
-            ChangeCanvas(_createRoom);
+            ChangeCanvas(_roomMenu);
         }
 
         public void ToMainMenu()

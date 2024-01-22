@@ -5,12 +5,13 @@ namespace MainGame
 {
     public class Shovel : Weapon
     {
-        [SerializeField] private Animator _animator;
         private BoxCollider2D _collider;
+        private WeaponAnimationController _animationController;
 
         private void Awake()
         {
             _collider = GetComponent<BoxCollider2D>();
+            _animationController = GetComponent<WeaponAnimationController>();
         }
 
         private void OnEnable()
@@ -34,8 +35,15 @@ namespace MainGame
 
         protected override void Fire()
         {
+            if (_collider.enabled == true)
+            {
+                return;
+            }
+
             _collider.enabled = true;
-            _animator.SetTrigger(AnimationTriggers.Hit.ToString());
+            _animationController.SetAnimationTrigger(AnimationTriggers.Hit);
+
+            StartCoroutine(AwaitHit());
         }
 
         private IEnumerator AwaitHit()

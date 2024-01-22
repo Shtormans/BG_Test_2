@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 7432774091786316626}
   - component: {fileID: 2065368073050729079}
   - component: {fileID: -2873244526381851251}
+  - component: {fileID: 8188992355901612546}
   m_Layer: 0
   m_Name: SuperShovel
   m_TagString: Untagged
@@ -49,7 +50,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Stats: {fileID: 11400000, guid: 22c0bdb78470ec5498d308b12a8c173e, type: 2}
-  _animator: {fileID: 9132144061866072101}
 --- !u!114 &7432774091786316626
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -69,6 +69,7 @@ MonoBehaviour:
   NetworkedBehaviours:
   - {fileID: 8147819823638848663}
   - {fileID: -2873244526381851251}
+  - {fileID: 8188992355901612546}
 --- !u!61 &2065368073050729079
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -130,6 +131,19 @@ MonoBehaviour:
   SyncParent: 0
   _autoAOIOverride: 1
   DisableSharedModeInterpolation: 0
+--- !u!114 &8188992355901612546
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3733798668241037279}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7acc249367d3ee446a4817b4ed979785, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _animator: {fileID: 9132144061866072101}
 --- !u!1 &4058059175873355762
 GameObject:
   m_ObjectHideFlags: 0

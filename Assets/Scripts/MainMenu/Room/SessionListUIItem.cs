@@ -13,7 +13,7 @@ namespace MainMenu
         [SerializeField] private Button _joinButton;
 
         private SessionInfo _sessionInfo;
-        public event Action<SessionInfo> SessionJoined;
+        public event Action<SessionInfo> ChoseRoom;
 
         public void SetSessionInfo(SessionInfo sessionInfo)
         {
@@ -32,7 +32,7 @@ namespace MainMenu
 
         public void JoinSession()
         {
-            SessionJoined?.Invoke(_sessionInfo);
+            ChoseRoom?.Invoke(_sessionInfo);
         }
     }
 }

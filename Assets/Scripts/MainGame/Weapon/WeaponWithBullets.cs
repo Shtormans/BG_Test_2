@@ -10,22 +10,24 @@ namespace MainGame
         [SerializeField] protected Transform BulletSpawner;
         private float _timeBetweenReloading = 1f;
 
-        protected int _clip;
-        protected int _inAmmo;
+        private WeaponBulletStatus _bulletStatus;
         protected bool _isReloading;
 
-        public int Clip => _clip;
-        public int InAmmo => _inAmmo;
+        public int Clip => _bulletStatus.InClip;
+        public int InAmmo => _bulletStatus.InAmmo;
+        public WeaponBulletStatus BulletStatus => _bulletStatus;
 
         public event Action<float> StartedReloading;
         public event Action<float> ReloadingTimeChanged;
         public event Action StoppedReloading;
-        public event Action BulletsAmountChanged;
+        public event Action<WeaponBulletStatus> BulletsAmountChanged;
 
         protected override void Init()
         {
-            _inAmmo = Stats.StartAmount;
-            _clip = Stats.Clip;
+            _bulletStatus = new WeaponBulletStatus();
+
+            _bulletStatus.InAmmo = Stats.StartAmount;
+            _bulletStatus.InClip = Stats.Clip;
             _lastFireTime = -Stats.FireRate;
 
             _isReloading = false;
@@ -33,8 +35,10 @@ namespace MainGame
 
         public void AddClips(int clips)
         {
-            _inAmmo += clips * Stats.Clip;
-            RPC_BulletsAmountChanged();
+            _bulletStatus.InAmmo += clips * Stats.Clip;
+
+            if (HasStateAuthority)
+                BulletsAmountChanged?.Invoke(_bulletStatus);
         }
 
         public void CreateBullet(Vector3 position, Quaternion direction)
@@ -57,16 +61,19 @@ namespace MainGame
                 return;
             }
 
-            if (HasStateAuthority)
+            if (!HasStateAuthority)
             {
-                Fire();
+                return;
             }
+
+            Fire();
 
             if (!Stats.InfiniteAmmo)
             {
-                _clip -= 1;
+                _bulletStatus.InClip -= 1;
             }
 
+            BulletsAmountChanged?.Invoke(_bulletStatus);
             TriggerFireEvent();
 
             _lastFireTime = Time.time;
@@ -78,16 +85,16 @@ namespace MainGame
 
         private void HandleBullets()
         {
-            if (_clip == 0 && _inAmmo > 0)
+            if (_bulletStatus.InClip == 0 && _bulletStatus.InAmmo > 0)
             {
-                RPC_StartedReloading(Stats.ReloadTime);
+                StartedReloading?.Invoke(Stats.ReloadTime);
                 Reload();
             }
         }
 
         private bool CanShoot()
         {
-            return !_isReloading && _clip > 0 && TimePassedBeforeNextShoot();
+            return !_isReloading && _bulletStatus.InClip > 0 && TimePassedBeforeNextShoot();
         }
 
         private IEnumerator AwaitReload()
@@ -100,45 +107,21 @@ namespace MainGame
                 yield return new WaitForSeconds(_timeBetweenReloading);
 
                 timePassed += _timeBetweenReloading;
-                RPC_ReloadingTimeChanged(Stats.ReloadTime - timePassed);
+                ReloadingTimeChanged?.Invoke(Stats.ReloadTime - timePassed);
             }
 
-            if (_inAmmo - Stats.Clip < 0)
+            if (_bulletStatus.InAmmo - Stats.Clip < 0)
             {
-                _inAmmo = 0;
-                _clip = _inAmmo - Stats.Clip;
+                _bulletStatus.InAmmo = 0;
+                _bulletStatus.InClip = _bulletStatus.InAmmo - Stats.Clip;
             }
             else
             {
-                _inAmmo -= Stats.Clip;
-                _clip = Stats.Clip;
+                _bulletStatus.InAmmo -= Stats.Clip;
+                _bulletStatus.InClip = Stats.Clip;
             }
 
             _isReloading = false;
-            RPC_StoppedReloading();
-        }
-
-        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-        private void RPC_BulletsAmountChanged(RpcInfo info = default)
-        {
-            BulletsAmountChanged?.Invoke();
-        }
-
-        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-        private void RPC_StartedReloading(float reloadingTime, RpcInfo info = default)
-        {
-            StartedReloading?.Invoke(reloadingTime);
-        }
-
-        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-        private void RPC_ReloadingTimeChanged(float reloadingTime, RpcInfo info = default)
-        {
-            ReloadingTimeChanged?.Invoke(reloadingTime);
-        }
-
-        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-        private void RPC_StoppedReloading(RpcInfo info = default)
-        {
             StoppedReloading?.Invoke();
         }
     }

@@ -1,6 +1,7 @@
 ﻿using Fusion;
 using System;
 using UnityEngine;
+using Zenject;
 
 namespace MainGame
 {
@@ -12,9 +13,12 @@ namespace MainGame
         public event Action<EntityHitStatus> Hit;
         public event Action Fired;
 
+        [Inject]
+        private NetworkObjectsContainer _networkObjectsContainer;
+
         public override void Spawned()
         {
-            NetworkObjectsContainer.Instance.AddObject(this);
+            _networkObjectsContainer.AddObject(this);
         }
 
         protected virtual void Init()
@@ -46,7 +50,7 @@ namespace MainGame
 
         protected void TriggerFireEvent()
         {
-            RPC_Fire();
+            Fired?.Invoke();
         }
 
         protected bool TimePassedBeforeNextShoot()
@@ -56,7 +60,7 @@ namespace MainGame
 
         protected void TriggerHitEvent(EntityHitStatus hitStatus)
         {
-            RPC_Hit(hitStatus);
+            Hit?.Invoke(hitStatus);
         }
 
         protected abstract void Fire();
@@ -66,18 +70,6 @@ namespace MainGame
         private void RPC_RotateWeapon(Quaternion rotation, RpcInfo info = default)
         {
             transform.rotation = rotation;
-        }
-
-        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-        private void RPC_Fire(RpcInfo info = default)
-        {
-            Fired?.Invoke();
-        }
-
-        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-        private void RPC_Hit(EntityHitStatus hitStatus, RpcInfo info = default)
-        {
-            Hit?.Invoke(hitStatus);
         }
     }
 }

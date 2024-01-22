@@ -2,7 +2,7 @@ using Cinemachine;
 using Fusion;
 using System;
 using UnityEngine;
-using static UnityEngine.EventSystems.EventTrigger;
+using Zenject;
 
 namespace MainGame
 {
@@ -10,29 +10,47 @@ namespace MainGame
     {
         [SerializeField] private Transform _body;
         private PlayerMover _playerPhysics;
+        private AnimatedSkin _skin;
+        private PlayerRPCHandler _rpcHandler;
         private PlayerGameStats _gameStats;
 
         [Networked] public PlayerBody PlayerBody { get; set; }
-
         public Transform Body => _body;
         public WeaponWithBullets PlayerWeapon => Weapon as WeaponWithBullets;
+        public AnimatedSkin Skin => _skin;
+        public PlayerRPCHandler RpcHandler => _rpcHandler;
+
         public PlayerGameStats GameStats => _gameStats;
-        public event Action<PlayerBehaviour> SpawnedEvent;
-        public event Action Killed;
+        public event Action<PlayerGameStats> Killed;
+        public event Action<WeaponWithBullets> WeaponChanged;
+
+        private PlayersContainer _playersContainer;
+        private NetworkObjectsContainer _networkObjectsContainer;
+
+        [Inject]
+        private void Construct(PlayersContainer playersContainer, NetworkObjectsContainer networkObjectsContainer)
+        {
+            _playersContainer = playersContainer;
+            _networkObjectsContainer = networkObjectsContainer;
+        }
+
+        public class Factory : PlaceholderFactory<PlayerBehaviour>
+        {
+        }
 
         public override void Spawned()
         {
             Init();
 
             _playerPhysics = GetComponent<PlayerMover>();
-            new PlayersContainer().AddPlayer(this);
+            _rpcHandler = GetComponent<PlayerRPCHandler>();
 
-            SpawnedEvent?.Invoke(this);
+            _playersContainer.AddPlayer(this);
+            _networkObjectsContainer.AddObject(this);
         }
 
         public override void FixedUpdateNetwork()
         {
-
             if (!GetInput(out PlayerInputData data))
             {
                 return;
@@ -49,14 +67,6 @@ namespace MainGame
         public void AddHealthBonus(int healthBonus)
         {
             AddHealth(healthBonus);
-        }
-
-        protected override void Died()
-        {
-            Runner.Spawn(DeadCopy,
-                        transform.position,
-                        Quaternion.identity,
-                        Object.InputAuthority);
         }
 
         private void UseInputOnHost(PlayerInputData inputData)
@@ -102,6 +112,12 @@ namespace MainGame
         {
             Weapon = weapon;
             weapon.Hit += OnWeaponHit;
+            WeaponChanged?.Invoke(PlayerWeapon);
+        }
+
+        public void SetSkin(AnimatedSkin skin)
+        {
+            _skin = skin;
         }
 
         public void SetCamera(CinemachineVirtualCamera camera)
@@ -116,14 +132,8 @@ namespace MainGame
             if (hitStatus.Died)
             {
                 _gameStats.KillsAmount++;
-                RPC_KilledEvent();
+                Killed?.Invoke(GameStats);
             }
-        }
-
-        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-        private void RPC_KilledEvent(RpcInfo info = default)
-        {
-            Killed?.Invoke();
         }
     }
 }

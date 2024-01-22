@@ -119,6 +119,7 @@ GameObject:
   - component: {fileID: -2339634176820442513}
   - component: {fileID: 312799788405582128}
   - component: {fileID: -3456177894958852843}
+  - component: {fileID: 3684712238351118496}
   m_Layer: 0
   m_Name: Shovel
   m_TagString: Untagged
@@ -155,7 +156,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Stats: {fileID: 11400000, guid: 5e00acfc8033e074ca4d23d0a5322cdd, type: 2}
-  _animator: {fileID: 3917379487006463151}
 --- !u!114 &-2339634176820442513
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -175,6 +175,7 @@ MonoBehaviour:
   NetworkedBehaviours:
   - {fileID: 510363904016416933}
   - {fileID: -3456177894958852843}
+  - {fileID: 3684712238351118496}
 --- !u!61 &312799788405582128
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -236,3 +237,16 @@ MonoBehaviour:
   SyncParent: 0
   _autoAOIOverride: 1
   DisableSharedModeInterpolation: 0
+--- !u!114 &3684712238351118496
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5525448470660679405}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7acc249367d3ee446a4817b4ed979785, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _animator: {fileID: 3917379487006463151}

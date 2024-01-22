@@ -1,19 +1,26 @@
 ﻿using Fusion;
 using UnityEngine;
+using Zenject;
 
 namespace MainGame
 {
     public class AnimatedSkin : NetworkBehaviour
     {
         [SerializeField] private Entity _entity;
-        private SpriteRenderer _spriteRenderer;
+        [SerializeField] private Sprite _icon;
 
+        private SpriteRenderer _spriteRenderer;
         private Animator _animator;
         private Vector3 _lastPosition;
 
+        public Sprite Icon => _icon;
+
+        [Inject]
+        private NetworkObjectsContainer _networkObjectsContainer;
+
         public override void Spawned()
         {
-            NetworkObjectsContainer.Instance.AddObject(this);
+            _networkObjectsContainer.AddObject(this);
         }
 
         private void Awake()

@@ -1,6 +1,8 @@
-﻿namespace MainGame
+﻿using Fusion;
+
+namespace MainGame
 {
-    public struct PlayerGameStats
+    public struct PlayerGameStats : INetworkStruct
     {
         public int KillsAmount;
         public int DamageAmount;

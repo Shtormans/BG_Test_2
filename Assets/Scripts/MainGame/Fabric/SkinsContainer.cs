@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 
 namespace MainGame
 {
@@ -7,12 +8,12 @@ namespace MainGame
     {
         [SerializeField] private List<AnimatedSkin> _skinsList;
 
-        public AnimatedSkin TakeUniqueSkin()
-        {
-            int index = Random.Range(0, _skinsList.Count - 1);
-            var skin = _skinsList[index];
+        [Inject]
+        private MultisceneItemsTransfer _multisceneItemsTransfer;
 
-            return skin;
+        public AnimatedSkin TakeSkin()
+        {
+            return _multisceneItemsTransfer.GetMultisceneItems().Skin;
         }
     }
 }

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Zenject;
 
 namespace MainGame
 {
@@ -16,43 +17,19 @@ namespace MainGame
         public NetworkRunner Runner => _runner;
         public PlayerRef CurrentPlayer => _currentPlayer;
 
-        private void OnGUI()
+        private PlayersContainer _playersContainer;
+        private MultisceneItemsTransfer _multisceneItemsTransfer;
+
+        [Inject]
+        private void Construct(PlayersContainer playersContainer, MultisceneItemsTransfer multisceneItemsTransfer)
         {
-            if (_runner == null)
-            {
-                if (GUI.Button(new Rect(0, 0, 200, 40), "Host"))
-                {
-                    StartGame(GameMode.Host);
-                }
-                if (GUI.Button(new Rect(0, 40, 200, 40), "Join"))
-                {
-                    StartGame(GameMode.Client);
-                }
-            }
+            _playersContainer = playersContainer;
+            _multisceneItemsTransfer = multisceneItemsTransfer;
         }
 
-        private async void StartGame(GameMode mode)
+        private void OnEnable()
         {
-            // Create the Fusion runner and let it know that we will be providing user input
-            _runner = gameObject.AddComponent<NetworkRunner>();
-            _runner.ProvideInput = true;
-
-            // Create the NetworkSceneInfo from the current scene
-            var scene = SceneRef.FromIndex(SceneManager.GetActiveScene().buildIndex);
-            var sceneInfo = new NetworkSceneInfo();
-            if (scene.IsValid)
-            {
-                sceneInfo.AddSceneRef(scene, LoadSceneMode.Additive);
-            }
-
-            // Start or join (depends on gamemode) a session with a specific name
-            await _runner.StartGame(new StartGameArgs()
-            {
-                GameMode = mode,
-                SessionName = "TestRoom",
-                Scene = scene,
-                SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>()
-            });
+            _runner = _multisceneItemsTransfer.GetMultisceneItems().NetworkRunner;
         }
 
         public override void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
@@ -72,6 +49,9 @@ namespace MainGame
             {
                 runner.Despawn(networkObject);
                 _spawnedCharacters.Remove(player);
+
+                var playerBehaviour = networkObject.gameObject.GetComponent<PlayerBehaviour>();
+                _playersContainer.RemovePlayer(playerBehaviour);
             }
         }
     }

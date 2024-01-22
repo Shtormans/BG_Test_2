@@ -8,23 +8,15 @@ namespace MainGame
     public class NetworkObjectsContainer : MonoBehaviour
     {
         private Dictionary<Type, List<NetworkBehaviour>> _objectsDictionary;
-        private static NetworkObjectsContainer _instance;
-
-        public static NetworkObjectsContainer Instance => _instance;
 
         private void Awake()
         {
-            if (_instance == null)
+            _objectsDictionary = new Dictionary<Type, List<NetworkBehaviour>>()
             {
-                _instance = this;
-
-                _objectsDictionary = new Dictionary<Type, List<NetworkBehaviour>>()
-                {
-                    { typeof(PlayerBehaviour), new() },
-                    { typeof(Weapon), new() },
-                    { typeof(AnimatedSkin), new() }
-                };
-            }
+                { typeof(PlayerBehaviour), new() },
+                { typeof(Weapon), new() },
+                { typeof(AnimatedSkin), new() }
+            };
         }
 
         public void AddObject(NetworkBehaviour value)

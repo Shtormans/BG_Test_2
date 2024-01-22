@@ -1,12 +1,15 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 
 namespace MainMenu
 {
     public class SkinChooser : MonoBehaviour
     {
         [SerializeField] private List<SkinBlock> _skinBlocks;
-        [SerializeField] private ToRoomTransfer _toRoomTransfer;
+
+        [Inject]
+        private MultisceneItemsTransfer _toRoomTransfer;
 
         private void OnEnable()
         {
@@ -18,10 +21,10 @@ namespace MainMenu
 
         private void OnSkinButtonClicked(MainGame.AnimatedSkin skin)
         {
-            var roomItems = _toRoomTransfer.GetRoomItems();
+            var roomItems = _toRoomTransfer.GetMultisceneItems();
             roomItems.Skin = skin;
             
-            _toRoomTransfer.ChangeRoomItems(roomItems);
+            _toRoomTransfer.ChangeMultisceneItems(roomItems);
         }
     }
 }

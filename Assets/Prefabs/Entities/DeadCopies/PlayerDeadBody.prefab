@@ -95,7 +95,7 @@ GameObject:
   - component: {fileID: 5114665708439984951}
   - component: {fileID: 8836666368849672326}
   - component: {fileID: 8650734245649407651}
-  - component: {fileID: 1539403757093911914}
+  - component: {fileID: 6122855069474624341}
   m_Layer: 0
   m_Name: PlayerDeadBody
   m_TagString: Untagged
@@ -150,7 +150,8 @@ MonoBehaviour:
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: 8836666368849672326}
---- !u!114 &1539403757093911914
+  - {fileID: 6122855069474624341}
+--- !u!114 &6122855069474624341
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -159,8 +160,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 8160098295975413747}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 1541381998, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Guid:
-    RawGuidValue: 18fe1e783451ff447a2b50ce4329ce80
+  SyncScale: 0
+  SyncParent: 0
+  _autoAOIOverride: 1
+  DisableSharedModeInterpolation: 0
