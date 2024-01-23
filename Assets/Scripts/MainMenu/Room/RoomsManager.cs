@@ -3,6 +3,7 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Zenject;
 
 namespace MainMenu
 {
@@ -10,19 +11,22 @@ namespace MainMenu
     {
         [SerializeField] private TMP_InputField _roomNameInput;
         [SerializeField] private Button _roomCreateButton;
-        [SerializeField] private NetworkRoomController _roomsController;
         [SerializeField] private VerticalLayoutGroup _layoutGroup;
         [SerializeField] private SessionListUIItem _uiSession;
 
         private int _minAmountOfLettersInRoomName = 3;
 
+        [Inject] private NetworkManager _roomsController;
+
         private void OnEnable()
         {
             _roomsController.JoinLobby();
+            _roomsController.SessionListWasUpdated += UpdateTable;
         }
 
-        private void OnDisable()
+        public void ExitLobby()
         {
+            Debug.Log("Exiting");
             _roomsController.ExitLobby();
         }
 
@@ -63,6 +67,7 @@ namespace MainMenu
 
         public void JoinRoom(SessionInfo session)
         {
+            Log.Debug("Joining room");
             _roomsController.JoinRoom(session.Name);
         }
 

@@ -31,6 +31,7 @@ namespace MainGame
 
         public PlayerBuilder AddSkin(AnimatedSkin skin)
         {
+            _player.SetSkin(skin);
             skin.SetEntity(_player);
             skin.transform.parent = _player.Body.transform;
             skin.transform.localPosition = Vector3.zero;

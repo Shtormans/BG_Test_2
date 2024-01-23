@@ -8,7 +8,7 @@ using Zenject;
 
 namespace MainMenu
 {
-    public class NetworkRoomController : NetworkRunnerCallbacks
+    public class NetworkManager : NetworkRunnerCallbacks
     {
         private List<SessionInfo> _sessionList;
         private NetworkRunner _runner;
@@ -17,10 +17,9 @@ namespace MainMenu
         private const string _netwrokRunnerObjectName = "NetworkRunner";
 
         public IReadOnlyList<SessionInfo> SessionList => _sessionList;
-        public event Action<IReadOnlyList<SessionInfo>> SessionListWasUpdated;
+        public event Action SessionListWasUpdated;
 
-        [Inject]
-        private MultisceneItemsTransfer _multisceneItemsTransfer;
+        public NetworkRunner Runner => _runner;
 
         private void Awake()
         {
@@ -29,8 +28,9 @@ namespace MainMenu
 
         public override void OnSessionListUpdated(NetworkRunner runner, List<SessionInfo> sessionList)
         {
+            Log.Debug("Session list was updated");
             _sessionList = sessionList;
-            SessionListWasUpdated?.Invoke(sessionList);
+            SessionListWasUpdated?.Invoke();
         }
 
         public void CreateRoom(string roomName)
@@ -55,15 +55,12 @@ namespace MainMenu
 
         private async void StartLobby()
         {
-            _runner = new GameObject() 
-            { 
-                name = _netwrokRunnerObjectName 
+            _runner = new GameObject()
+            {
+                name = _netwrokRunnerObjectName
             }.AddComponent<NetworkRunner>();
             _runner.ProvideInput = true;
-
-            var roomItems = _multisceneItemsTransfer.GetMultisceneItems();
-            roomItems.NetworkRunner = _runner;
-            _multisceneItemsTransfer.ChangeMultisceneItems(roomItems);
+            _runner.AddCallbacks(this);
 
             await _runner.JoinSessionLobby(SessionLobby.Custom, _lobbyName);
         }
@@ -83,7 +80,7 @@ namespace MainMenu
                 SessionName = roomName,
                 Scene = scene,
                 PlayerCount = _playerCount,
-                SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>()
+                SceneManager = _runner.gameObject.AddComponent<NetworkSceneManagerDefault>()
             });
         }
     }

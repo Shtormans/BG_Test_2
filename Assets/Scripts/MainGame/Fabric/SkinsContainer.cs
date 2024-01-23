@@ -15,5 +15,18 @@ namespace MainGame
         {
             return _multisceneItemsTransfer.GetMultisceneItems().Skin;
         }
+
+        public AnimatedSkin TakeSkinById(int id)
+        {
+            foreach (var item in _skinsList)
+            {
+                if (item.SkinId == id)
+                {
+                    return item;
+                }
+            }
+
+            return null;
+        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Fusion;
 using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 
 namespace MainGame
 {
@@ -8,6 +9,8 @@ namespace MainGame
     {
         [SerializeField] private NetworkSpawner _networkSpawner;
         [SerializeField] private EnemyContainer _enemyContainer;
+
+        [Inject] private EnemyController.Factory _enemyFactory;
 
         public List<EnemyController> CreateWave(Wave wave)
         {
@@ -18,8 +21,8 @@ namespace MainGame
                 for (int i = 0; i < item.Amount; i++)
                 {
                     var enemy = Spawn(item.Enemy);
-                    enemies.Add(enemy);
 
+                    enemies.Add(enemy);
                     _enemyContainer.AddEnemy(enemy);
                 }
             }
@@ -29,7 +32,7 @@ namespace MainGame
 
         private EnemyController Spawn(EnemyController enemy)
         {
-            return _networkSpawner.Runner.Spawn(enemy, Vector3.zero, Quaternion.identity, _networkSpawner.CurrentPlayer);
+            return _enemyFactory.Create(enemy, _networkSpawner.Runner, _networkSpawner.CurrentPlayer);
         }
     }
 }

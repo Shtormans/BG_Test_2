@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
+using Zenject.SpaceFighter;
 
 namespace MainGame
 {
@@ -19,8 +20,8 @@ namespace MainGame
         [SerializeField] private Canvas _gameUI;
         [SerializeField] private Canvas _gameEndScreen;
 
-        [Inject]
-        private PlayersContainer _playersContainer;
+        [Inject] private PlayersContainer _playersContainer;
+        [Inject] private MultisceneItemsTransfer _multisceneItemsTransfer;
 
         public void Awake()
         {
@@ -34,17 +35,19 @@ namespace MainGame
 
         public void OnPlayerDied()
         {
+            Debug.Log(_playersContainer.PlayersCount);
             if (_playersContainer.PlayersCount > 0)
             {
                 _camera.Follow = _playersContainer.FirstPlayer.transform;
             }
             else
             {
-                FinishGame();
+                RPC_FinishGame();
             }
         }
 
-        private void FinishGame()
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        private void RPC_FinishGame()
         {
             if (HasStateAuthority)
             {
@@ -53,20 +56,12 @@ namespace MainGame
 
             _gameUI.gameObject.SetActive(false);
             _gameEndScreen.gameObject.SetActive(true);
+            Debug.Log(_gameEndScreen.gameObject);
         }
 
         private void StartGame(PlayerBehaviour player)
         {
-            _playersContainer.PlayerSpawned -= StartGame;
-            _playersContainer.PlayerSpawned += BuildPlayer;
-
-            AwakeGame();
-            BuildPlayer(player);
-
-            if (HasStateAuthority)
-            {
-                _waveController.StartCreatingWaves();
-            }
+            StartCoroutine(WaitForPlayerToSpawn(player));
         }
 
         private void BuildPlayer(PlayerBehaviour player)
@@ -93,6 +88,38 @@ namespace MainGame
             if (player.HasInputAuthority)
             {
                 _playerFabric.UpdateInputPlayer(player);
+            }
+        }
+
+        private IEnumerator WaitForPlayerToSpawn(PlayerBehaviour player)
+        {
+            yield return null;
+
+            RPC_StartPlayerBodyCreation();
+
+            _playersContainer.PlayerSpawned -= StartGame;
+            _playersContainer.PlayerSpawned += BuildPlayer;
+
+            AwakeGame();
+            BuildPlayer(player);
+
+            if (HasStateAuthority)
+            {
+                _waveController.StartCreatingWaves();
+            }
+        }
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        private void RPC_StartPlayerBodyCreation()
+        {
+            if (HasStateAuthority)
+            {
+                var playerStructure = new SpawnPlayerStructure()
+                {
+                    SkinId = _multisceneItemsTransfer.GetMultisceneItems().Skin.SkinId
+                };
+
+                _playerFabric.CreatePlayerBody(playerStructure);
             }
         }
     }

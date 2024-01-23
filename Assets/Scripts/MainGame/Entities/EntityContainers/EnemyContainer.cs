@@ -17,6 +17,11 @@ namespace MainGame
             _enemies.Add(enemy);
         }
 
+        public void RemoveEnemy(EnemyController enemy)
+        {
+            _enemies.Remove(enemy);
+        }
+
         public void DisabeBrains()
         {
             foreach (var enemy in _enemies)

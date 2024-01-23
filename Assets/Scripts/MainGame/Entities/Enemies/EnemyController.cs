@@ -1,3 +1,4 @@
+using Fusion;
 using UnityEngine;
 using Zenject;
 
@@ -12,15 +13,43 @@ namespace MainGame
         private bool LastRunningState;
 
         protected PlayersContainer PlayersContainer;
+        private EnemyContainer _enemyContainer;
 
-        [Inject]
-        private void Construct(PlayersContainer playersContainer)
+        public class Factory : PlaceholderFactory<EnemyController, NetworkRunner, PlayerRef, EnemyController>
         {
-            PlayersContainer = playersContainer;
         }
 
-        public class Factory : PlaceholderFactory<EnemyController>
+        public class EnemyControllerFactory : IFactory<EnemyController, NetworkRunner, PlayerRef, EnemyController>
         {
+            private DiContainer _diContainer;
+
+            public EnemyControllerFactory(DiContainer diContainer)
+            {
+                _diContainer = diContainer;
+            }
+
+            public EnemyController Create(EnemyController prefab, NetworkRunner runner, PlayerRef inputAuthority)
+            {
+                var enemy = runner.Spawn(prefab, inputAuthority: inputAuthority);
+                _diContainer.Inject(enemy);
+
+                return enemy;
+            }
+        }
+
+        [Inject]
+        public void Construct(PlayersContainer playersContainer, EnemyContainer enemyContainer)
+        {
+            Debug.Log("Injecting");
+            PlayersContainer = playersContainer;
+            _enemyContainer = enemyContainer;
+        }
+
+        protected override void OnDied()
+        {
+            _enemyContainer.RemoveEnemy(this);
+
+            base.OnDied();
         }
 
         public override void FixedUpdateNetwork()

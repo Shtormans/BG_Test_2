@@ -12,15 +12,41 @@ namespace MainGame
         private SpriteRenderer _spriteRenderer;
         private Animator _animator;
         private Vector3 _lastPosition;
+        public readonly int SkinId = 1;
 
         public Sprite Icon => _icon;
 
+        public class Factory : PlaceholderFactory<AnimatedSkin, AnimatedSkin>
+        {
+
+        }
+
+        public class AnimatedSkinFactory : IFactory<AnimatedSkin, AnimatedSkin>
+        {
+            private DiContainer _diContainer;
+
+            public AnimatedSkinFactory(DiContainer diContainer)
+            {
+                _diContainer = diContainer;
+            }
+
+            public AnimatedSkin Create(AnimatedSkin prefab)
+            {
+                _diContainer.Inject(prefab);
+
+                return prefab;
+            }
+        }
+
         [Inject]
-        private NetworkObjectsContainer _networkObjectsContainer;
+        public void Construct(NetworkObjectsContainer networkObjectsContainer)
+        {
+            networkObjectsContainer.AddObject(this);
+        }
 
         public override void Spawned()
         {
-            _networkObjectsContainer.AddObject(this);
+            PlayerInjectionManager.InjectIntoSkin(this);
         }
 
         private void Awake()
@@ -34,7 +60,6 @@ namespace MainGame
             }
             _lastPosition = transform.position;
         }
-
 
         public override void FixedUpdateNetwork()
         {

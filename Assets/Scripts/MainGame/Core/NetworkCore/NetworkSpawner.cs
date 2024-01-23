@@ -1,8 +1,7 @@
 ﻿using Fusion;
-using System;
+using MainMenu;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using Zenject;
 
 namespace MainGame
@@ -10,6 +9,8 @@ namespace MainGame
     public class NetworkSpawner : NetworkRunnerCallbacks
     {
         [SerializeField] private PlayerFabric _playerFabric;
+        [SerializeField] private ButtonsController _buttonsController;
+
         private Dictionary<PlayerRef, NetworkObject> _spawnedCharacters = new Dictionary<PlayerRef, NetworkObject>();
         private NetworkRunner _runner;
         private PlayerRef _currentPlayer;
@@ -18,18 +19,21 @@ namespace MainGame
         public PlayerRef CurrentPlayer => _currentPlayer;
 
         private PlayersContainer _playersContainer;
-        private MultisceneItemsTransfer _multisceneItemsTransfer;
+        private NetworkManager _networkManager;
+        private MultisceneItemsTransfer _transfer;
 
         [Inject]
-        private void Construct(PlayersContainer playersContainer, MultisceneItemsTransfer multisceneItemsTransfer)
+        private void Construct(PlayersContainer playersContainer, NetworkManager networkManager, MultisceneItemsTransfer transfer)
         {
             _playersContainer = playersContainer;
-            _multisceneItemsTransfer = multisceneItemsTransfer;
+            _networkManager = networkManager;
+            _transfer = transfer;
         }
 
-        private void OnEnable()
+        private void Awake()
         {
-            _runner = _multisceneItemsTransfer.GetMultisceneItems().NetworkRunner;
+            _runner = _networkManager.Runner;
+            _runner.AddCallbacks(this);
         }
 
         public override void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
@@ -52,6 +56,11 @@ namespace MainGame
 
                 var playerBehaviour = networkObject.gameObject.GetComponent<PlayerBehaviour>();
                 _playersContainer.RemovePlayer(playerBehaviour);
+            }
+
+            if (!runner.IsServer)
+            {
+                _buttonsController.ExitToMainMenu();
             }
         }
     }

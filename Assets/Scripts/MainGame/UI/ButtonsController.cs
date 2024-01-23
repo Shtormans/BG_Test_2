@@ -1,3 +1,4 @@
+using MainMenu;
 using Multiscene;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -6,11 +7,11 @@ using Zenject;
 public class ButtonsController : MonoBehaviour
 {
     [Inject]
-    private MultisceneItemsTransfer _mulisceneItemsTransfer;
+    private NetworkManager _networkManager;
 
     public void ExitToMainMenu()
     {
-        _mulisceneItemsTransfer.GetMultisceneItems().NetworkRunner.Shutdown();
+        _networkManager.Runner.Shutdown();
         SceneManager.LoadScene((int)SceneIndeces.MainMenu);
     }
 }

@@ -12,7 +12,7 @@ namespace MainGame
 
         public void SetUIElements(PlayerGameResult gameOverResult)
         {
-            _icon.sprite = gameOverResult.Icon;
+            _icon.sprite = gameOverResult.Skin.Icon;
             _amountOfKillsText.text = gameOverResult.Kills.ToString();
             _amountOfDamageText.text = gameOverResult.Damage.ToString();
         }

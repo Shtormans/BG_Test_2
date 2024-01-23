@@ -13,12 +13,37 @@ namespace MainGame
         public event Action<EntityHitStatus> Hit;
         public event Action Fired;
 
+        public class Factory : PlaceholderFactory<Weapon, Weapon>
+        {
+
+        }
+
+        public class WeaponFactory : IFactory<Weapon, Weapon>
+        {
+            private DiContainer _diContainer;
+
+            public WeaponFactory(DiContainer diContainer)
+            {
+                _diContainer = diContainer;
+            }
+
+            public Weapon Create(Weapon prefab)
+            {
+                _diContainer.Inject(prefab);
+
+                return prefab;
+            }
+        }
+
         [Inject]
-        private NetworkObjectsContainer _networkObjectsContainer;
+        public void Construct(NetworkObjectsContainer networkObjectsContainer)
+        {
+            networkObjectsContainer.AddObject(this);
+        }
 
         public override void Spawned()
         {
-            _networkObjectsContainer.AddObject(this);
+            PlayerInjectionManager.InjectIntoWeapon(this);
         }
 
         protected virtual void Init()

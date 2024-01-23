@@ -16,17 +16,25 @@ namespace MainGame
         public bool IsRunning { get; protected set; }
         public Health Health => _health;
 
+        public event Action EntitySpawned;
         public event Action<EntityHitStatus> WasHit;
         public event Action<AnimationTriggers> AnimationTriggered;
         public event Action<Health> HealthAmountChanged;
+        public event Action Died;
 
         private void OnCollisionExit2D(Collision2D collision)
         {
             _rigidbody.velocity = Vector3.zero;
         }
 
+        protected void TriggerSpawnEvent()
+        {
+            EntitySpawned?.Invoke();
+        }
+
         protected virtual void OnDied()
         {
+            Debug.Log("Player died");
             if (!HasStateAuthority)
             {
                 return;
@@ -38,6 +46,8 @@ namespace MainGame
                         Object.InputAuthority);
 
             Runner.Despawn(Object);
+
+            Died?.Invoke();
         }
 
         protected void Init()

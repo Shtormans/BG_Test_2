@@ -12,7 +12,8 @@ namespace MainGame
         private PlayerMover _playerPhysics;
         private AnimatedSkin _skin;
         private PlayerRPCHandler _rpcHandler;
-        private PlayerGameStats _gameStats;
+        private PlayerGameStats _gameStats = new();
+        private PlayersContainer _playersContainer;
 
         [Networked] public PlayerBody PlayerBody { get; set; }
         public Transform Body => _body;
@@ -24,29 +25,53 @@ namespace MainGame
         public event Action<PlayerGameStats> Killed;
         public event Action<WeaponWithBullets> WeaponChanged;
 
-        private PlayersContainer _playersContainer;
-        private NetworkObjectsContainer _networkObjectsContainer;
-
-        [Inject]
-        private void Construct(PlayersContainer playersContainer, NetworkObjectsContainer networkObjectsContainer)
+        public class Factory : PlaceholderFactory<PlayerBehaviour, PlayerBehaviour>
         {
-            _playersContainer = playersContainer;
-            _networkObjectsContainer = networkObjectsContainer;
         }
 
-        public class Factory : PlaceholderFactory<PlayerBehaviour>
+        public class PlayerBehaviourFactory : IFactory<PlayerBehaviour, PlayerBehaviour>
         {
+            private DiContainer _diContainer;
+
+            public PlayerBehaviourFactory(DiContainer diContainer)
+            {
+                _diContainer = diContainer;
+            }
+
+            public PlayerBehaviour Create(PlayerBehaviour prefab)
+            {
+                _diContainer.Inject(prefab);
+
+                return prefab;
+            }
+        }
+
+        [Inject]
+        public void Construct(NetworkObjectsContainer networkObjectsContainer, PlayersContainer playersContainer)
+        {
+            networkObjectsContainer.AddObject(this);
+            _playersContainer = playersContainer;
+            _playersContainer = playersContainer;
+            _playersContainer.AddPlayer(this);
+        }
+
+        protected override void OnDied()
+        {
+            _playersContainer.RemovePlayer(this);
+
+            base.OnDied();
         }
 
         public override void Spawned()
         {
+            Debug.Log("Before injection");
+            PlayerInjectionManager.InjectIntoPlayer(this);
             Init();
 
             _playerPhysics = GetComponent<PlayerMover>();
             _rpcHandler = GetComponent<PlayerRPCHandler>();
 
-            _playersContainer.AddPlayer(this);
-            _networkObjectsContainer.AddObject(this);
+            TriggerSpawnEvent();
         }
 
         public override void FixedUpdateNetwork()

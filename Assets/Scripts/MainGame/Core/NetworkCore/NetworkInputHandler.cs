@@ -1,5 +1,7 @@
 ﻿using Fusion;
+using MainMenu;
 using UnityEngine;
+using Zenject;
 
 namespace MainGame
 {
@@ -9,14 +11,25 @@ namespace MainGame
         [SerializeField] private FixedJoystick _rotationJoystick;
         private IInputHandler _inputHandler;
 
+        private NetworkRunner _runner;
+        private NetworkManager _networkManager;
+
+        [Inject]
+        private void Construct(NetworkManager networkManager)
+        {
+            _networkManager = networkManager;
+        }
+
         private void Awake()
         {
+            _runner = _networkManager.Runner;
+            _runner.AddCallbacks(this);
+
 #if UNITY_EDITOR
             SetInputHandler(new KeyboardMouseInputHandler());
 #elif UNITY_ANDROID
             SetInputHandler(new JoystickInputHandler(_movementJoystick, _rotationJoystick));
 #endif
-            SetInputHandler(new KeyboardMouseInputHandler());
         }
 
         private void SetInputHandler(IInputHandler inputHandler)
