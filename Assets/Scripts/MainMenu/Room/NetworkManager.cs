@@ -28,7 +28,6 @@ namespace MainMenu
 
         public override void OnSessionListUpdated(NetworkRunner runner, List<SessionInfo> sessionList)
         {
-            Log.Debug("Session list was updated");
             _sessionList = sessionList;
             SessionListWasUpdated?.Invoke();
         }

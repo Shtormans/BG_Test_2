@@ -12,9 +12,11 @@ namespace MainGame
         [SerializeField] private SpawnersContainer _spawnersContainer;
         [SerializeField] private EnemyFabric _enemyFabric;
         [SerializeField] private BonusFabric _bonusFabric;
+        [SerializeField] private float _timeToSpawnWave = 20f;
 
         private int _waveNumber = 0;
         private float _timeBetweenWaves = 1f;
+        private Coroutine _spawnWaveDuringTimeCoroutine;
 
         public event Action<int> NewWaveStarted;
         public event Action<int> EndOfWave;
@@ -46,7 +48,25 @@ namespace MainGame
             SpawnEnemies(enemies);
             SpawnBonuses(bonuses);
 
+            _spawnWaveDuringTimeCoroutine = StartCoroutine(SpawnWaveDuringTime());
+
             StartCoroutine(AwaitForEndOfCurrentWave());
+        }
+
+        private IEnumerator SpawnWaveDuringTime()
+        {
+            while (true)
+            {
+                yield return new WaitForSeconds(_timeToSpawnWave);
+
+                var wave = _waveContainer.CurrentWave;
+
+                var enemies = _enemyFabric.CreateWave(wave);
+                var bonuses = _bonusFabric.CreateWave(wave);
+
+                SpawnEnemies(enemies);
+                SpawnBonuses(bonuses);
+            }
         }
 
         private IEnumerator AwaitForNextWave()
@@ -79,6 +99,11 @@ namespace MainGame
 
                 timePassed += _timeBetweenWaves;
                 RPC_SendTimeChangedEvent(timeToNextWave - timePassed);
+            }
+
+            if (_spawnWaveDuringTimeCoroutine != null)
+            {
+                StopCoroutine(_spawnWaveDuringTimeCoroutine);
             }
 
             StartCoroutine(AwaitForNextWave());

@@ -15,7 +15,7 @@ MonoBehaviour:
   Bullet: {fileID: 7366586026546222550, guid: 3027f1471f5aad24d913ca6a07408cb1, type: 3}
   Damage: 3
   TimeBeforeDisappear: 1
-  BulletSpeed: 2
+  BulletSpeed: 5
   InfiniteAmmo: 0
   Clip: 4
   StartAmount: 12

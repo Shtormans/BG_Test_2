@@ -362,7 +362,19 @@
             <summary>(1048) Value for OnStatusChanged()-call, when the encryption-setup for secure communication finished successfully.</summary>
         </member>
         <member name="F:ExitGames.Client.Photon.StatusCode.EncryptionFailedToEstablish">
-            <summary>(1049) Value for OnStatusChanged()-call, when the encryption-setup failed for some reason. Check debug logs.</summary>
+            <summary>(1049) Value for OnStatusChanged()-call, when the encryption-setup failed for some reason. Check debug 
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            s.</summary>
         </member>
         <member name="T:ExitGames.Client.Photon.IPhotonPeerListener">
             <summary>

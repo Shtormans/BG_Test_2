@@ -1,4 +1,5 @@
 ﻿using Fusion;
+using System.Collections;
 using System.Linq;
 using TMPro;
 using UnityEngine;
@@ -24,9 +25,13 @@ namespace MainMenu
             _roomsController.SessionListWasUpdated += UpdateTable;
         }
 
+        private void OnDisable()
+        {
+            _roomsController.SessionListWasUpdated -= UpdateTable;
+        }
+
         public void ExitLobby()
         {
-            Debug.Log("Exiting");
             _roomsController.ExitLobby();
         }
 
@@ -52,6 +57,11 @@ namespace MainMenu
 
         public void UpdateTable()
         {
+            if (!_roomNameInput.interactable)
+            {
+                _roomNameInput.interactable = true;
+            }
+
             for (int i = 0; i < _layoutGroup.transform.childCount; i++)
             {
                 Destroy(_layoutGroup.transform.GetChild(i).gameObject);
@@ -67,7 +77,6 @@ namespace MainMenu
 
         public void JoinRoom(SessionInfo session)
         {
-            Log.Debug("Joining room");
             _roomsController.JoinRoom(session.Name);
         }
 

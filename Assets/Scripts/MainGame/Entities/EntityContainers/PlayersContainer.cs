@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Zenject.SpaceFighter;
 
 namespace MainGame
 {
@@ -20,18 +21,40 @@ namespace MainGame
 
         public void AddPlayer(PlayerBehaviour player)
         {
-            Debug.Log("Adding player");
             _players.Add(player);
-
             PlayerSpawned?.Invoke(player);
         }
 
         public void SynchroniseAndGetGameResults(Action<List<PlayerGameResult>> action)
         {
-            UpdateGetGameResults();
-            Debug.Log("Before start of synchronisation");
             RPC_SynchroniseGameResultsWithHost();
             DataSynchronised += action;
+        }
+
+        public bool HasPlayer(PlayerBehaviour player)
+        {
+            foreach (var item in _players)
+            {
+                if (player == item)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public PlayerBehaviour GetPlayerById(NetworkBehaviourId id)
+        {
+            foreach (var item in _players)
+            {
+                if (id == item.Id)
+                {
+                    return item;
+                }
+            }
+
+            return null;
         }
 
         public List<PlayerGameResult> UpdateGetGameResults()
@@ -62,16 +85,19 @@ namespace MainGame
                 return;
             }
 
-            Debug.Log("Before");
+            _players.Remove(player);
+
+            if (!HasStateAuthority)
+            {
+                return;
+            }
+
             _gameStats[player.Id] = new PlayerGameResult()
             {
                 Skin = player.Skin,
                 Damage = player.GameStats.DamageAmount,
                 Kills = player.GameStats.KillsAmount
             };
-            Debug.Log("After");
-
-            _players.Remove(player);
         }
 
         public PlayerBehaviour GetNearestPlayer(Transform value)
@@ -101,7 +127,6 @@ namespace MainGame
         [Rpc(RpcSources.All, RpcTargets.All)]
         private void RPC_SynchroniseGameResultsWithHost()
         {
-            Debug.Log("Before synchronization");
             if (HasStateAuthority)
             {
                 UpdateGetGameResults();
@@ -109,7 +134,6 @@ namespace MainGame
 
                 foreach (var item in _gameStats)
                 {
-                    Debug.Log(item.Value.Damage);
                     NetworkBehaviourId playerId = item.Key;
                     int skinId = item.Value.Skin.SkinId;
                     int damage = item.Value.Damage;
@@ -125,7 +149,6 @@ namespace MainGame
         [Rpc(RpcSources.All, RpcTargets.All)]
         private void RPC_GetGameResults(NetworkBehaviourId playerId, int skinId, int damage, int kills, bool isLastDataPacakge)
         {
-            Debug.Log("Random pos");
             if (!HasStateAuthority)
             {
                 _gameStats[playerId] = new PlayerGameResult()
@@ -137,7 +160,6 @@ namespace MainGame
 
                 if (isLastDataPacakge)
                 {
-                    Debug.Log("Synchronised");
                     DataSynchronised?.Invoke(GetGameResults());
                 }
             }

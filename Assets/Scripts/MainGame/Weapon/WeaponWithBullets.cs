@@ -19,7 +19,7 @@ namespace MainGame
 
         public event Action<float> StartedReloading;
         public event Action<float> ReloadingTimeChanged;
-        public event Action StoppedReloading;
+        public event Action<WeaponBulletStatus> StoppedReloading;
         public event Action<WeaponBulletStatus> BulletsAmountChanged;
 
         protected override void Init()
@@ -38,7 +38,10 @@ namespace MainGame
             _bulletStatus.InAmmo += clips * Stats.Clip;
 
             if (HasStateAuthority)
+            {
                 BulletsAmountChanged?.Invoke(_bulletStatus);
+                HandleBullets();
+            }
         }
 
         public void CreateBullet(Vector3 position, Quaternion direction)
@@ -112,8 +115,8 @@ namespace MainGame
 
             if (_bulletStatus.InAmmo - Stats.Clip < 0)
             {
+                _bulletStatus.InClip = _bulletStatus.InAmmo;
                 _bulletStatus.InAmmo = 0;
-                _bulletStatus.InClip = _bulletStatus.InAmmo - Stats.Clip;
             }
             else
             {
@@ -122,7 +125,7 @@ namespace MainGame
             }
 
             _isReloading = false;
-            StoppedReloading?.Invoke();
+            StoppedReloading?.Invoke(_bulletStatus);
         }
     }
 }

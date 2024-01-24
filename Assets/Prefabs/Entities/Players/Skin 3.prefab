@@ -123,6 +123,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _entity: {fileID: 0}
   _icon: {fileID: 1267830177, guid: 8f7a60065e3984c489b9c4d41bc3dc4e, type: 3}
+  _skinId: 3
 --- !u!114 &3998217867766105466
 MonoBehaviour:
   m_ObjectHideFlags: 0

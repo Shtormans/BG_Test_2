@@ -9,7 +9,7 @@ namespace MainGame
 
         public Weapon TakeUniqueWeapon()
         {
-            int index = Random.Range(0, _weaponList.Count - 1);
+            int index = Random.Range(0, _weaponList.Count);
             var weapon = _weaponList[index];
 
             _weaponList.RemoveAt(index);

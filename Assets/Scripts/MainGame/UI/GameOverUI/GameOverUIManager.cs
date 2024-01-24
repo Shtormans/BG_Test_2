@@ -25,7 +25,6 @@ namespace MainGame
             }
             else
             {
-                Debug.Log("Enabling GameOver");
                 _playersContainer.SynchroniseAndGetGameResults(UpdateResultsTable);
             }
         }

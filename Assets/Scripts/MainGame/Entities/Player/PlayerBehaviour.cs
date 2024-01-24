@@ -14,6 +14,7 @@ namespace MainGame
         private PlayerRPCHandler _rpcHandler;
         private PlayerGameStats _gameStats = new();
         private PlayersContainer _playersContainer;
+        public readonly Vector2 WeaponOffset = new Vector2(0.068f, -0.197f);
 
         [Networked] public PlayerBody PlayerBody { get; set; }
         public Transform Body => _body;
@@ -64,7 +65,6 @@ namespace MainGame
 
         public override void Spawned()
         {
-            Debug.Log("Before injection");
             PlayerInjectionManager.InjectIntoPlayer(this);
             Init();
 

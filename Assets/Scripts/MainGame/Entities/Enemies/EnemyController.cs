@@ -40,7 +40,6 @@ namespace MainGame
         [Inject]
         public void Construct(PlayersContainer playersContainer, EnemyContainer enemyContainer)
         {
-            Debug.Log("Injecting");
             PlayersContainer = playersContainer;
             _enemyContainer = enemyContainer;
         }
@@ -92,7 +91,7 @@ namespace MainGame
         public void MoveTo(Vector3 direction)
         {
             IsRunning = true;
-            Rigidbody.MovePosition(transform.position + Runner.DeltaTime * Stats.EntityData.Speed * direction);
+            Rigidbody.velocity = direction * Stats.EntityData.Speed;
         }
     }
 }

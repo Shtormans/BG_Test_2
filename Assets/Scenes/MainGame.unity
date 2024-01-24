@@ -1126,6 +1126,7 @@ MonoBehaviour:
   _spawnersContainer: {fileID: 894895927}
   _enemyFabric: {fileID: 973779952}
   _bonusFabric: {fileID: 973779959}
+  _timeToSpawnWave: 20
 --- !u!1 &281080878
 GameObject:
   m_ObjectHideFlags: 0
@@ -1512,11 +1513,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2929252283123773938, guid: aaa2c939c0359ac4dbce3f49e8b90252, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -180
+      value: -320
       objectReference: {fileID: 0}
     - target: {fileID: 2929252283123773938, guid: aaa2c939c0359ac4dbce3f49e8b90252, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 150
+      value: 375
       objectReference: {fileID: 0}
     - target: {fileID: 2929252283123773938, guid: aaa2c939c0359ac4dbce3f49e8b90252, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -1979,6 +1980,7 @@ MonoBehaviour:
   _playerFabric: {fileID: 973779956}
   _camera: {fileID: 754906843}
   _enemyContainer: {fileID: 894895930}
+  _networkSpawner: {fileID: 261114074}
   _awakeOnGameStartsObjects:
   - {fileID: 277363464}
   - {fileID: 973779949}
@@ -2525,6 +2527,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _skinsList:
   - {fileID: 7860308455352738846, guid: eb14424f89dc2e843940ddc608244215, type: 3}
+  - {fileID: 7860308455352738846, guid: 054d82f26ccf80f4e852a58cfac1d678, type: 3}
+  - {fileID: 7860308455352738846, guid: 389909cb77f8cc34bb9e95a62a3548d0, type: 3}
 --- !u!114 &894895926
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2538,8 +2542,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _waves:
-  - {fileID: 11400000, guid: 30e98f630ed8a8c4d91226f9226e8faf, type: 2}
   - {fileID: 11400000, guid: 2342762c8e0c64846a3ff649b8b8eb0a, type: 2}
+  - {fileID: 11400000, guid: 30e98f630ed8a8c4d91226f9226e8faf, type: 2}
   - {fileID: 11400000, guid: a2931a2925a87224eae8213e20853d0c, type: 2}
 --- !u!114 &894895927
 MonoBehaviour:
@@ -3109,11 +3113,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2929252283123773938, guid: aaa2c939c0359ac4dbce3f49e8b90252, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 180
+      value: 320
       objectReference: {fileID: 0}
     - target: {fileID: 2929252283123773938, guid: aaa2c939c0359ac4dbce3f49e8b90252, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 150
+      value: 375
       objectReference: {fileID: 0}
     - target: {fileID: 2929252283123773938, guid: aaa2c939c0359ac4dbce3f49e8b90252, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -20401,10 +20405,10 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: 22, y: 13}
-      - {x: 22, y: -9}
-      - {x: -13, y: -9}
-      - {x: -13, y: 13}
+    - - {x: 23.5, y: 13.5}
+      - {x: 23.5, y: -9.5}
+      - {x: -14.5, y: -9.5}
+      - {x: -14.5, y: 13.5}
   m_UseDelaunayMesh: 0
 --- !u!1 &1896643909
 GameObject:

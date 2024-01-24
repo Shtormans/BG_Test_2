@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: PlayerStats
   m_EditorClassIdentifier: 
   <EntityData>k__BackingField:
-    Health: 25
+    Health: 15
     Speed: 5

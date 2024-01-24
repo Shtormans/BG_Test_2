@@ -19,7 +19,7 @@
         "PlayerCount": 10,
         "TickRateSelection": {
             "Client": 64,
-            "ServerIndex": 1,
+            "ServerIndex": 0,
             "ClientSendIndex": 1,
             "ServerSendIndex": 1
         }
@@ -49,8 +49,8 @@
         "AdditionalLoss": 0.0
     },
     "Heap": {
-        "PageShift": 15,
-        "PageCount": 256,
+        "PageShift": 14,
+        "PageCount": 128,
         "GlobalsSize": 0
     },
     "AssembliesToWeave": [

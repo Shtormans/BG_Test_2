@@ -22,7 +22,7 @@ namespace MainGame
         public PlayerBuilder AddWeapon(Weapon weapon)
         {
             weapon.transform.parent = _player.Body.transform;
-            weapon.transform.localPosition = Vector3.zero;
+            weapon.transform.localPosition = _player.WeaponOffset;
             weapon.transform.rotation = Quaternion.identity;
             _player.SetWeapon(weapon);
 

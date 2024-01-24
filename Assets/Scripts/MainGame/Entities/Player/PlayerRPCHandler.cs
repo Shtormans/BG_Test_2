@@ -11,7 +11,7 @@ namespace MainGame
         public event Action<Health> PlayerHealthAmountChanged;
         public event Action<WeaponBulletStatus> PlayerWeaponBulletsAmountChanged;
         public event Action<float> PlayerWeaponStartedReloading;
-        public event Action PlayerWeaponStoppedReloading;
+        public event Action<WeaponBulletStatus> PlayerWeaponStoppedReloading;
         public event Action<float> PlayerWeaponReloadingTimeChanged;
 
         private PlayerBehaviour _player;
@@ -76,9 +76,9 @@ namespace MainGame
         }
 
         [Rpc(RpcSources.All, RpcTargets.All)]
-        private void RPC_PlayerWeaponStoppedReloading()
+        private void RPC_PlayerWeaponStoppedReloading(WeaponBulletStatus bulletStatus)
         {
-            PlayerWeaponStoppedReloading?.Invoke();
+            PlayerWeaponStoppedReloading?.Invoke(bulletStatus);
         }
 
         [Rpc(RpcSources.All, RpcTargets.All)]

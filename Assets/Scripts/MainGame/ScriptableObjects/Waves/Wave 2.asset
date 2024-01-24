@@ -12,11 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b68244bc834f2814c8a065eb98f9cbd8, type: 3}
   m_Name: Wave 2
   m_EditorClassIdentifier: 
-  WaveTime: 20
-  RestTimeBeforeNextWave: 10
+  WaveTime: 180
+  RestTimeBeforeNextWave: 30
   Enemies:
   - Enemy: {fileID: 377020424657664988, guid: 50c86db40ebdf6d408e47ebe2d62f9be, type: 3}
     Amount: 5
   - Enemy: {fileID: 5597728625955732964, guid: 20fc2e287eb64f749880a89af6b4944e, type: 3}
     Amount: 2
-  Bonuses: []
+  Bonuses:
+  - Bonus: {fileID: 7682400219792137203, guid: 32a2e9258253b574ca1452b9b0783fba, type: 3}
+    Amount: 2
+  - Bonus: {fileID: 6264570100224220885, guid: 255a585b9d43be74c92ef69104a7c680, type: 3}
+    Amount: 2

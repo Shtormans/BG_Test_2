@@ -14,20 +14,21 @@ namespace MainGame
         private Dictionary<PlayerRef, NetworkObject> _spawnedCharacters = new Dictionary<PlayerRef, NetworkObject>();
         private NetworkRunner _runner;
         private PlayerRef _currentPlayer;
+        private int _amountOfPlayersInRoom = 0;
+        private const int _maxPlayers = 2;
 
         public NetworkRunner Runner => _runner;
         public PlayerRef CurrentPlayer => _currentPlayer;
+        public bool LobbyIsFull => _amountOfPlayersInRoom == _maxPlayers;
 
         private PlayersContainer _playersContainer;
         private NetworkManager _networkManager;
-        private MultisceneItemsTransfer _transfer;
 
         [Inject]
-        private void Construct(PlayersContainer playersContainer, NetworkManager networkManager, MultisceneItemsTransfer transfer)
+        private void Construct(PlayersContainer playersContainer, NetworkManager networkManager)
         {
             _playersContainer = playersContainer;
             _networkManager = networkManager;
-            _transfer = transfer;
         }
 
         private void Awake()
@@ -44,6 +45,7 @@ namespace MainGame
                 _spawnedCharacters.Add(player, networkPlayerObject);
 
                 _currentPlayer = player;
+                _amountOfPlayersInRoom++;
             }
         }
 
@@ -55,7 +57,11 @@ namespace MainGame
                 _spawnedCharacters.Remove(player);
 
                 var playerBehaviour = networkObject.gameObject.GetComponent<PlayerBehaviour>();
-                _playersContainer.RemovePlayer(playerBehaviour);
+
+                if (_playersContainer.HasPlayer(playerBehaviour))
+                {
+                    _playersContainer.RemovePlayer(playerBehaviour);
+                }
             }
 
             if (!runner.IsServer)

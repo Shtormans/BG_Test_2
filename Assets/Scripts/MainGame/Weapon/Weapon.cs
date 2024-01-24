@@ -8,6 +8,8 @@ namespace MainGame
     public abstract class Weapon : NetworkBehaviour
     {
         [SerializeField] protected WeaponStats Stats;
+        [SerializeField] private SpriteRenderer _sprite;
+        [SerializeField] protected bool _flipWeaponSprite = true;
         protected float _lastFireTime;
 
         public event Action<EntityHitStatus> Hit;
@@ -39,6 +41,21 @@ namespace MainGame
         public void Construct(NetworkObjectsContainer networkObjectsContainer)
         {
             networkObjectsContainer.AddObject(this);
+        }
+
+        private void Update()
+        {
+            if (!_flipWeaponSprite)
+            {
+                return;
+            }
+
+            float rotationByZ = Mathf.Cos(transform.rotation.eulerAngles.z * Mathf.Deg2Rad);
+
+            if (_sprite.flipY != rotationByZ < 0)
+            {
+                _sprite.flipY = !_sprite.flipY;
+            }
         }
 
         public override void Spawned()

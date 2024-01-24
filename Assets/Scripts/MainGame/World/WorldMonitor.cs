@@ -14,6 +14,7 @@ namespace MainGame
         [SerializeField] private PlayerFabric _playerFabric;
         [SerializeField] private CinemachineVirtualCamera _camera;
         [SerializeField] private EnemyContainer _enemyContainer;
+        [SerializeField] private NetworkSpawner _networkSpawner;
 
         [SerializeField] private List<GameObject> _awakeOnGameStartsObjects;
         [SerializeField] private Canvas _loadingCanvas;
@@ -33,12 +34,21 @@ namespace MainGame
             _loadingCanvas.gameObject.SetActive(true);
         }
 
+        public void SetAuthority(PlayerRef player)
+        {
+            Object.AssignInputAuthority(player);
+        }
+
         public void OnPlayerDied()
         {
-            Debug.Log(_playersContainer.PlayersCount);
+            if (!HasStateAuthority)
+            {
+                return;
+            }
+
             if (_playersContainer.PlayersCount > 0)
             {
-                _camera.Follow = _playersContainer.FirstPlayer.transform;
+                RPC_ChangeCameraTarget(_playersContainer.FirstPlayer.Id);
             }
             else
             {
@@ -56,7 +66,6 @@ namespace MainGame
 
             _gameUI.gameObject.SetActive(false);
             _gameEndScreen.gameObject.SetActive(true);
-            Debug.Log(_gameEndScreen.gameObject);
         }
 
         private void StartGame(PlayerBehaviour player)
@@ -89,19 +98,44 @@ namespace MainGame
             {
                 _playerFabric.UpdateInputPlayer(player);
             }
+
+            if (_networkSpawner.LobbyIsFull)
+                RPC_AwakeGame();
         }
 
         private IEnumerator WaitForPlayerToSpawn(PlayerBehaviour player)
         {
             yield return null;
 
-            RPC_StartPlayerBodyCreation();
+            if (player.HasInputAuthority)
+            {
+                var playerStructure = new SpawnPlayerStructure()
+                {
+                    SkinId = _multisceneItemsTransfer.GetMultisceneItems().Skin.SkinId
+                };
+
+                RPC_StartPlayerBodyCreation(playerStructure);
+            }
 
             _playersContainer.PlayerSpawned -= StartGame;
             _playersContainer.PlayerSpawned += BuildPlayer;
 
-            AwakeGame();
             BuildPlayer(player);
+        }
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        private void RPC_StartPlayerBodyCreation(SpawnPlayerStructure playerStructure)
+        {
+            if (HasStateAuthority)
+            {
+                _playerFabric.CreatePlayerBody(playerStructure);
+            }
+        }
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        private void RPC_AwakeGame()
+        {
+            AwakeGame();
 
             if (HasStateAuthority)
             {
@@ -110,17 +144,9 @@ namespace MainGame
         }
 
         [Rpc(RpcSources.All, RpcTargets.All)]
-        private void RPC_StartPlayerBodyCreation()
+        private void RPC_ChangeCameraTarget(NetworkBehaviourId networkId)
         {
-            if (HasStateAuthority)
-            {
-                var playerStructure = new SpawnPlayerStructure()
-                {
-                    SkinId = _multisceneItemsTransfer.GetMultisceneItems().Skin.SkinId
-                };
-
-                _playerFabric.CreatePlayerBody(playerStructure);
-            }
+            _camera.Follow = _playersContainer.GetPlayerById(networkId).transform;
         }
     }
 }

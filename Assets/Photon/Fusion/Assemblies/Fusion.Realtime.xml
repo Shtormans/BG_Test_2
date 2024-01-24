@@ -400,7 +400,8 @@
         <member name="F:Fusion.Photon.Realtime.AppSettings.EnableLobbyStatistics">
             <summary>If true, the client will request the list of currently available lobbies.</summary>
         </member>
-        <member name="F:Fusion.Photon.Realtime.AppSettings.NetworkLogging">
+        <member name="F:Fusion.Photon.Realtime.AppSettings.Network
+                ging">
             <summary>Log level for the network lib.</summary>
         </member>
         <member name="P:Fusion.Photon.Realtime.AppSettings.IsMasterServerAddress">

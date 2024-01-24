@@ -349,7 +349,14 @@ This reverts commit 3afe58fd7b35c0d790407cf7ccf71a7d1e0e668d
 **Changes**
 
 - `ILogger` string parameter changed to `object` (from `string`)
-- `FusionUnityLogger.LogException` will first log the exception type and then spawn a thread to rethrow it (if UNITY_EDITOR is defined). This ensures double clicking on a log entry takes you to the throw location
+- `FusionUnity
+
+
+
+
+
+ger.LogException` will first log the exception type and then spawn a thread to rethrow it (if UNITY_EDITOR is defined). This ensures double clicking on a 
+entry takes you to the throw location
 
 **Bug Fixes**
 

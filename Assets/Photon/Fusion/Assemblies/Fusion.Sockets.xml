@@ -442,7 +442,11 @@
             <see href="https://datatracker.ietf.org/doc/html/rfc5128"/> State of Peer-to-Peer (P2P) Communication across Network Address Translators(NATs)
             <see href="https://www.netmanias.com/en/post/techdocs/6067/nat-network-protocol/nat-behavior-discovery-using-stun-rfc-5780"/>
             <see href="https://www.voip-info.org/stun/"/>
-            <see href="https://tailscale.com/blog/how-nat-traversal-works/"/>
+            <see href="https://tailscale.com/b
+                 
+
+
+/how-nat-traversal-works/"/>
             <see href="https://serverfault.com/questions/782627/udp-hole-punching-still-required-in-ipv6-even-without-nat"/>
             <see href="https://serverfault.com/questions/184524/switching-to-ipv6-implies-dropping-nat-is-that-a-good-thing"/>
             </summary>
@@ -811,7 +815,13 @@
             List all Disconnect reason used by the Plugin to remove an Actor from the Room
             </summary>
         </member>
-        <member name="F:Fusion.Protocol.DisconnectReason.ServerLogic">
+        <member name="F:Fusion.Protocol.DisconnectReason.Server
+                
+                
+                
+                
+                
+                ic">
             <summary>
             Abstract disconnect reason
             </summary>

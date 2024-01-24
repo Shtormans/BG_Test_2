@@ -87,11 +87,11 @@ namespace MainGame
             _reloadingTimeText.text = ConvertTimeToString(reloadTime);
         }
 
-        private void OnStoppedReloading()
+        private void OnStoppedReloading(WeaponBulletStatus bulletStatus)
         {
             ChangeToBulletsLeftText();
 
-            _rpcHandler.UseCurrentWeaponBulletsStatusRPC();
+            OnPlayerShoot(bulletStatus);
         }
 
         private void OnPlayerShoot(WeaponBulletStatus bulletStatus)

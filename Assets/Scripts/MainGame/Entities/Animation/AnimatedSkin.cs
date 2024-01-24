@@ -8,13 +8,14 @@ namespace MainGame
     {
         [SerializeField] private Entity _entity;
         [SerializeField] private Sprite _icon;
+        [SerializeField] private int _skinId;
 
         private SpriteRenderer _spriteRenderer;
         private Animator _animator;
         private Vector3 _lastPosition;
-        public readonly int SkinId = 1;
 
         public Sprite Icon => _icon;
+        public int SkinId => _skinId;
 
         public class Factory : PlaceholderFactory<AnimatedSkin, AnimatedSkin>
         {
@@ -70,9 +71,10 @@ namespace MainGame
 
             var direction = (_entity.transform.position - _lastPosition).normalized;
 
-            if (direction.x != 0 && _spriteRenderer.flipX != direction.x < 0)
+            if (direction.x != 0)
             {
-                _spriteRenderer.flipX = !_spriteRenderer.flipX;
+                var yRotation = direction.x > 0 ? 0 : 180;
+                _spriteRenderer.transform.eulerAngles = new Vector3(0, yRotation, 0);
             }
 
             _lastPosition = _entity.transform.position;

@@ -34,7 +34,6 @@ namespace MainGame
 
         protected virtual void OnDied()
         {
-            Debug.Log("Player died");
             if (!HasStateAuthority)
             {
                 return;
