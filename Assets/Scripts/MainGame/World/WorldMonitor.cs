@@ -27,6 +27,12 @@ namespace MainGame
         public void Awake()
         {
             _playersContainer.PlayerSpawned += StartGame;
+            _waveController.WavesAreOver += OnWavesAreOver;
+        }
+
+        private void OnWavesAreOver()
+        {
+            RPC_FinishGame();
         }
 
         private void OnEnable()
@@ -39,7 +45,7 @@ namespace MainGame
             Object.AssignInputAuthority(player);
         }
 
-        public void OnPlayerDied()
+        public void OnPlayerDied(Entity entity)
         {
             if (!HasStateAuthority)
             {

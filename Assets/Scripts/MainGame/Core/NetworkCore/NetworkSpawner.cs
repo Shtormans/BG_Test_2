@@ -55,13 +55,6 @@ namespace MainGame
             {
                 runner.Despawn(networkObject);
                 _spawnedCharacters.Remove(player);
-
-                var playerBehaviour = networkObject.gameObject.GetComponent<PlayerBehaviour>();
-
-                if (_playersContainer.HasPlayer(playerBehaviour))
-                {
-                    _playersContainer.RemovePlayer(playerBehaviour);
-                }
             }
 
             if (!runner.IsServer)

@@ -29,7 +29,7 @@ public class ContainersInstaller : MonoInstaller
             .BindFactory<AnimatedSkin, AnimatedSkin, AnimatedSkin.Factory>()
             .FromFactory<AnimatedSkin.AnimatedSkinFactory>();
         Container
-            .BindFactory<EnemyController, NetworkRunner, PlayerRef, EnemyController, EnemyController.Factory>()
+            .BindFactory<EnemyController, Vector3, NetworkRunner, PlayerRef, EnemyController, EnemyController.Factory>()
             .FromFactory<EnemyController.EnemyControllerFactory>();
     }
 }

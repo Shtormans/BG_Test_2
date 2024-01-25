@@ -15,11 +15,11 @@ namespace MainGame
         protected PlayersContainer PlayersContainer;
         private EnemyContainer _enemyContainer;
 
-        public class Factory : PlaceholderFactory<EnemyController, NetworkRunner, PlayerRef, EnemyController>
+        public class Factory : PlaceholderFactory<EnemyController, Vector3, NetworkRunner, PlayerRef, EnemyController>
         {
         }
 
-        public class EnemyControllerFactory : IFactory<EnemyController, NetworkRunner, PlayerRef, EnemyController>
+        public class EnemyControllerFactory : IFactory<EnemyController, Vector3, NetworkRunner, PlayerRef, EnemyController>
         {
             private DiContainer _diContainer;
 
@@ -28,9 +28,9 @@ namespace MainGame
                 _diContainer = diContainer;
             }
 
-            public EnemyController Create(EnemyController prefab, NetworkRunner runner, PlayerRef inputAuthority)
+            public EnemyController Create(EnemyController prefab, Vector3 position, NetworkRunner runner, PlayerRef inputAuthority)
             {
-                var enemy = runner.Spawn(prefab, inputAuthority: inputAuthority);
+                var enemy = runner.Spawn(prefab, position, inputAuthority: inputAuthority);
                 _diContainer.Inject(enemy);
 
                 return enemy;
@@ -42,6 +42,11 @@ namespace MainGame
         {
             PlayersContainer = playersContainer;
             _enemyContainer = enemyContainer;
+        }
+
+        public void Kill()
+        {
+            TakeDamage((uint)Stats.EntityData.Health);
         }
 
         protected override void OnDied()
@@ -91,7 +96,9 @@ namespace MainGame
         public void MoveTo(Vector3 direction)
         {
             IsRunning = true;
-            Rigidbody.velocity = direction * Stats.EntityData.Speed;
+            
+            var newPosition = transform.position + (Vector3)(Stats.EntityData.Speed * Runner.DeltaTime * direction);
+            Rigidbody.MovePosition(newPosition);
         }
     }
 }

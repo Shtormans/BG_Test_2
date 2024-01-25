@@ -74,6 +74,11 @@ namespace MainGame
             TriggerSpawnEvent();
         }
 
+        public override void Despawned(NetworkRunner runner, bool hasState)
+        {
+            _playersContainer.RemovePlayer(this);
+        }
+
         public override void FixedUpdateNetwork()
         {
             if (!GetInput(out PlayerInputData data))

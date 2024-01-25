@@ -40,7 +40,11 @@ namespace MainGame
             if (HasStateAuthority)
             {
                 BulletsAmountChanged?.Invoke(_bulletStatus);
-                HandleBullets();
+
+                if (!_isReloading)
+                {
+                    HandleBullets();
+                }
             }
         }
 

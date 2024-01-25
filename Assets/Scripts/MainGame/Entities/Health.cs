@@ -28,6 +28,11 @@ namespace MainGame
         public void AddHealth(uint health)
         {
             _currentHealth += (int)health;
+
+            if (health > _maxHealth)
+            {
+                _currentHealth = _maxHealth;
+            }
         }
 
         public bool IsAlive()

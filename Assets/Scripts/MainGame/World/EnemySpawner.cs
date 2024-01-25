@@ -1,5 +1,8 @@
 using UnityEngine;
 
-public class EnemySpawner : MonoBehaviour
+namespace MainGame
 {
+    public class EnemySpawner : MonoBehaviour
+    {
+    }
 }

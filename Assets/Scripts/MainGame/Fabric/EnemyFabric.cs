@@ -9,6 +9,7 @@ namespace MainGame
     {
         [SerializeField] private NetworkSpawner _networkSpawner;
         [SerializeField] private EnemyContainer _enemyContainer;
+        [SerializeField] private SpawnPosition _spawnPosition;
 
         [Inject] private EnemyController.Factory _enemyFactory;
 
@@ -30,9 +31,17 @@ namespace MainGame
             return enemies;
         }
 
+        public EnemyController CreateRandomEnemyFromWave(Wave wave)
+        {
+            int index = Random.Range(0, wave.Enemies.Count);
+            var enemy = wave.Enemies[index].Enemy;
+
+            return Spawn(enemy);
+        }
+
         private EnemyController Spawn(EnemyController enemy)
         {
-            return _enemyFactory.Create(enemy, _networkSpawner.Runner, _networkSpawner.CurrentPlayer);
+            return _enemyFactory.Create(enemy, _spawnPosition.transform.position, _networkSpawner.Runner, _networkSpawner.CurrentPlayer);
         }
     }
 }

@@ -1,5 +1,8 @@
 using UnityEngine;
 
-public class BonusSpawner : MonoBehaviour
+namespace MainGame
 {
+    public class BonusSpawner : MonoBehaviour
+    {
+    }
 }

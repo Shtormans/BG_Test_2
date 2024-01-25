@@ -12,11 +12,14 @@ namespace MainGame
         [SerializeField] private SpawnersContainer _spawnersContainer;
         [SerializeField] private EnemyFabric _enemyFabric;
         [SerializeField] private BonusFabric _bonusFabric;
-        [SerializeField] private float _timeToSpawnWave = 20f;
+        [SerializeField] private float _timeToSpawnBonus = 15f;
 
+        private readonly float _timeBetweenWaves = 1f;
         private int _waveNumber = 0;
-        private float _timeBetweenWaves = 1f;
-        private Coroutine _spawnWaveDuringTimeCoroutine;
+        private bool _gameIsInRestState = false;
+        private LinkedList<EnemyController> _aliveEnemies = new();
+        private Coroutine _awaitForNextWaveCoroutine;
+        private Coroutine _startSpawningBonusesCoroutine;
 
         public event Action<int> NewWaveStarted;
         public event Action<int> EndOfWave;
@@ -27,52 +30,58 @@ namespace MainGame
         {
             if (!HasStateAuthority) return;
 
-            StartCoroutine(AwaitForNextWave());
+            _startSpawningBonusesCoroutine = StartCoroutine(StartSpawningBonuses());
+            _awaitForNextWaveCoroutine = StartCoroutine(AwaitForNextWave());
+        }
+
+        public void SkipRestBetweenWaves()
+        {
+            if (_awaitForNextWaveCoroutine != null)
+            {
+                StopCoroutine(_awaitForNextWaveCoroutine);
+                SpawnNewWave();
+            }
+        }
+
+        private void OnWaivesEnded()
+        {
+            if (_startSpawningBonusesCoroutine != null)
+            {
+                StopCoroutine(_startSpawningBonusesCoroutine);
+            }
+
+            WavesAreOver?.Invoke();
         }
 
         private void SpawnNewWave()
         {
             if (!_waveContainer.HasNextWave)
             {
-                WavesAreOver?.Invoke();
+                OnWaivesEnded();
                 return;
             }
 
+            _gameIsInRestState = false;
             _waveNumber++;
             var wave = _waveContainer.CurrentWave;
             RPC_SendNewWaveEvent(_waveNumber, wave.WaveTime);
 
             var enemies = _enemyFabric.CreateWave(wave);
-            var bonuses = _bonusFabric.CreateWave(wave);
 
-            SpawnEnemies(enemies);
-            SpawnBonuses(bonuses);
+            _aliveEnemies = new LinkedList<EnemyController>(enemies);
 
-            _spawnWaveDuringTimeCoroutine = StartCoroutine(SpawnWaveDuringTime());
+            AddKilledEventToEnemies(enemies);
+            ArrangeEnemies(enemies);
 
             StartCoroutine(AwaitForEndOfCurrentWave());
         }
 
-        private IEnumerator SpawnWaveDuringTime()
-        {
-            while (true)
-            {
-                yield return new WaitForSeconds(_timeToSpawnWave);
-
-                var wave = _waveContainer.CurrentWave;
-
-                var enemies = _enemyFabric.CreateWave(wave);
-                var bonuses = _bonusFabric.CreateWave(wave);
-
-                SpawnEnemies(enemies);
-                SpawnBonuses(bonuses);
-            }
-        }
-
         private IEnumerator AwaitForNextWave()
         {
+            _gameIsInRestState = true;
             _waveContainer.MoveToNextWave();
             RPC_SendEndOfWaveEvent(_waveNumber, _waveContainer.CurrentWave.RestTimeBeforeNextWave);
+            KillAliveEnemies();
 
             float timePassed = 0f;
             float timeToNextWave = _waveContainer.CurrentWave.RestTimeBeforeNextWave;
@@ -101,31 +110,71 @@ namespace MainGame
                 RPC_SendTimeChangedEvent(timeToNextWave - timePassed);
             }
 
-            if (_spawnWaveDuringTimeCoroutine != null)
-            {
-                StopCoroutine(_spawnWaveDuringTimeCoroutine);
-            }
-
-            StartCoroutine(AwaitForNextWave());
+            _awaitForNextWaveCoroutine = StartCoroutine(AwaitForNextWave());
         }
 
-        private void SpawnEnemies(List<EnemyController> enemies)
+        private void AddKilledEventToEnemies(List<EnemyController> enemies)
         {
-            _spawnersContainer.ClearAfterSpawningWave();
-
             foreach (var enemy in enemies)
             {
-                _spawnersContainer.SpawnEnemy(enemy);
+                enemy.Died += OnEnemyWasKilled;
             }
         }
 
-        private void SpawnBonuses(List<BonusController> bonuses)
+        private void OnEnemyWasKilled(Entity entity)
         {
-            _spawnersContainer.ClearAfterSpawningWave();
-         
-            foreach (var bonus in bonuses)
+            if (_gameIsInRestState)
             {
-                _spawnersContainer.SpawnBonus(bonus);
+                return;
+            }
+
+            _aliveEnemies.Remove(entity as EnemyController);
+
+            var enemy = _enemyFabric.CreateRandomEnemyFromWave(_waveContainer.CurrentWave);
+            enemy.Died += OnEnemyWasKilled;
+            _spawnersContainer.ArrangeEnemy(enemy);
+
+            _aliveEnemies.AddLast(enemy);
+        }
+
+        private void OnBonusWasPickedUp(BonusController bonus)
+        {
+            _spawnersContainer.ClearBonusSpawner(bonus);
+        }
+
+        private IEnumerator StartSpawningBonuses()
+        {
+            while (true)
+            {
+                yield return new WaitForSeconds(_timeToSpawnBonus);
+
+                if (_spawnersContainer.AmountOfOccupiedBonusSpawners == _spawnersContainer.AmountOfBonusSpawners)
+                {
+                    yield return null;
+                }
+
+                var bonus = _bonusFabric.CreateRandomBonusFromWave(_waveContainer.CurrentWave);
+                bonus.PickedUp += OnBonusWasPickedUp;
+
+                _spawnersContainer.ArrangeBonus(bonus);
+            }
+        }
+
+        private void KillAliveEnemies()
+        {
+            foreach (var enemy in _aliveEnemies)
+            {
+                enemy.Kill();
+            }
+
+            _aliveEnemies.Clear();
+        }
+
+        private void ArrangeEnemies(List<EnemyController> enemies)
+        {
+            foreach (var enemy in enemies)
+            {
+                _spawnersContainer.ArrangeEnemy(enemy);
             }
         }
 

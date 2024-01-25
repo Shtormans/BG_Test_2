@@ -1,11 +1,13 @@
+using Fusion;
 using System.Security.Cryptography;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using Zenject.SpaceFighter;
 
 namespace MainGame
 {
-    public class PlayerStatsUIController : MonoBehaviour
+    public class PlayerStatsUIController : NetworkBehaviour
     {
         [SerializeField] private TextMeshProUGUI _healthText;
         [SerializeField] private TextMeshProUGUI _weaponText;
@@ -13,14 +15,18 @@ namespace MainGame
         [SerializeField] private TextMeshProUGUI _amountOfKillsText;
         [SerializeField] private TextMeshProUGUI _waveNumberText;
         [SerializeField] private TextMeshProUGUI _timeToNextWaveText;
+        [SerializeField] private Button _skipRestTimeBetweenWavesButton;
 
         [SerializeField] private WaveController _waveController;
+        [SerializeField] private PlayersContainer _playersContainer;
 
         private PlayerRPCHandler _rpcHandler;
+        private PlayerBehaviour _player;
 
         public void SetPlayer(PlayerBehaviour player)
         {
             _rpcHandler = player.RpcHandler;
+            _player = player;
 
             _rpcHandler.PlayerWasHit += OnPlayerWasHit;
             _rpcHandler.PlayerKilled += OnKillAmountChanged;
@@ -51,6 +57,31 @@ namespace MainGame
             _waveController.EndOfWave -= OnWaveEnded;
         }
 
+        private void AskToSkipRestBetweenWaves()
+        {
+            _skipRestTimeBetweenWavesButton.gameObject.SetActive(false);
+            RPC_AskToSkipRestBetweenWaves();
+        }
+
+        private void AcceptToSkipRestBetweenWaves()
+        {
+            _skipRestTimeBetweenWavesButton.gameObject.SetActive(false);
+            RPC_AcceptToSkipRestBetweenWaves();
+        }
+
+        private void OnAcceptedToSkipRestBetweenWaves()
+        {
+            _skipRestTimeBetweenWavesButton.gameObject.SetActive(false);
+            _waveController.SkipRestBetweenWaves();
+        }
+
+        private void OnAskedToSkipRestBetweenWaves()
+        {
+            _skipRestTimeBetweenWavesButton.gameObject.SetActive(true);
+            _skipRestTimeBetweenWavesButton.onClick.RemoveAllListeners();
+            _skipRestTimeBetweenWavesButton.onClick.AddListener(AcceptToSkipRestBetweenWaves);
+        }
+
         private void OnHealthAmountChanged(Health health)
         {
             _healthText.text = health.CurrentHealth.ToString();
@@ -59,10 +90,30 @@ namespace MainGame
         private void OnWaveEnded(int waveNumber)
         {
             _waveNumberText.text = ConvertEndOfWaveNumberToString(waveNumber);
+
+            if (_playersContainer.PlayersCount == 1)
+            {
+                if (_playersContainer.HasPlayer(_player))
+                {
+                    _skipRestTimeBetweenWavesButton.gameObject.SetActive(true);
+                    _skipRestTimeBetweenWavesButton.onClick.RemoveAllListeners();
+                    _skipRestTimeBetweenWavesButton.onClick.AddListener(AcceptToSkipRestBetweenWaves);
+                }
+            }
+            else
+            {
+                if (_player.HasStateAuthority)
+                {
+                    _skipRestTimeBetweenWavesButton.gameObject.SetActive(true);
+                    _skipRestTimeBetweenWavesButton.onClick.RemoveAllListeners();
+                    _skipRestTimeBetweenWavesButton.onClick.AddListener(AskToSkipRestBetweenWaves);
+                }
+            }
         }
 
         private void OnWaveChanged(int waveNumber)
         {
+            _skipRestTimeBetweenWavesButton.gameObject.SetActive(false);
             _waveNumberText.text = ConvertWaveNumberToString(waveNumber);
         }
 
@@ -136,7 +187,25 @@ namespace MainGame
 
         private string ConvertEndOfWaveNumberToString(int waveNumber)
         {
-            return $"Wave {waveNumber}-{waveNumber+1}";
+            return $"Wave {waveNumber}-{waveNumber + 1}";
+        }
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        private void RPC_AskToSkipRestBetweenWaves()
+        {
+            if (!HasStateAuthority)
+            {
+                OnAskedToSkipRestBetweenWaves();
+            }
+        }
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        private void RPC_AcceptToSkipRestBetweenWaves()
+        {
+            if (HasStateAuthority)
+            {
+                OnAcceptedToSkipRestBetweenWaves();
+            }
         }
     }
 }

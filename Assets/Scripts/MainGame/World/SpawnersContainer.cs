@@ -6,48 +6,57 @@ public class SpawnersContainer : MonoBehaviour
 {
     [SerializeField] private List<EnemySpawner> _enemySpawners;
     [SerializeField] private List<BonusSpawner> _bonusSpawners;
-    private int _spawnersInUse;
-    private bool[] _isSpawnerInUse;
 
-    public void SpawnEnemy(EnemyController enemy)
+    private Dictionary<int, BonusController> _occupiedBonusSpawners = new();
+
+    public int AmountOfEnemySpawners => _enemySpawners.Count;
+    public int AmountOfBonusSpawners => _bonusSpawners.Count;
+    public int AmountOfOccupiedBonusSpawners => _occupiedBonusSpawners.Count;
+
+    public void ArrangeEnemy(EnemyController enemy)
     {
-        int index = GetSpawnerIndex(_enemySpawners.Count);
+        int index = GetEnemySpawnerIndex();
         enemy.transform.position = _enemySpawners[index].transform.position;
     }
 
-    public void SpawnBonus(BonusController bonus)
+    public void ArrangeBonus(BonusController bonus)
     {
-        int index = GetSpawnerIndex(_bonusSpawners.Count);
+        int index = GetBonusSpawnerIndex();
         bonus.transform.position = _bonusSpawners[index].transform.position;
+
+        _occupiedBonusSpawners[index] = bonus;
     }
 
-    public void ClearAfterSpawningWave()
+    public void ClearBonusSpawner(BonusController bonus)
     {
-        _isSpawnerInUse = null;
-        _spawnersInUse = 0;
+        foreach (var pair in _occupiedBonusSpawners)
+        {
+            if (pair.Value == bonus)
+            {
+                _occupiedBonusSpawners.Remove(pair.Key);
+                return;
+            }
+        }
     }
 
-    private int GetSpawnerIndex(int length)
+    private int GetEnemySpawnerIndex()
     {
-        if (_spawnersInUse >= length - 1)
+        return Random.Range(0, _bonusSpawners.Count);
+    }
+
+    private int GetBonusSpawnerIndex()
+    {
+        if (_bonusSpawners.Count == _occupiedBonusSpawners.Count)
         {
-            ClearAfterSpawningWave();
+            return 0;
         }
 
-        if (_isSpawnerInUse == null)
+        int index = Random.Range(0, _bonusSpawners.Count);
+        while (_occupiedBonusSpawners.TryGetValue(index, out var _))
         {
-            _isSpawnerInUse = new bool[length];
+            index = (index + 1) % _bonusSpawners.Count;
         }
 
-        int index = Random.Range(0, length);
-
-        while (_isSpawnerInUse[index])
-        {
-            index = (index + 1) % length;
-        }
-
-        _spawnersInUse++;
-        _isSpawnerInUse[index] = true;
         return index;
     }
 }

@@ -20,7 +20,7 @@ namespace MainGame
         public event Action<EntityHitStatus> WasHit;
         public event Action<AnimationTriggers> AnimationTriggered;
         public event Action<Health> HealthAmountChanged;
-        public event Action Died;
+        public event Action<Entity> Died;
 
         private void OnCollisionExit2D(Collision2D collision)
         {
@@ -46,7 +46,7 @@ namespace MainGame
 
             Runner.Despawn(Object);
 
-            Died?.Invoke();
+            Died?.Invoke(this);
         }
 
         protected void Init()

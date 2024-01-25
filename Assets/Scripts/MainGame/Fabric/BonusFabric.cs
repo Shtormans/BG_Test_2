@@ -6,6 +6,7 @@ namespace MainGame
     public class BonusFabric : MonoBehaviour
     {
         [SerializeField] private NetworkSpawner _networkSpawner;
+        [SerializeField] private SpawnPosition _spawnPosition;
 
         public List<BonusController> CreateWave(Wave wave)
         {
@@ -23,9 +24,17 @@ namespace MainGame
             return bonuses;
         }
 
+        public BonusController CreateRandomBonusFromWave(Wave wave)
+        {
+            int index = Random.Range(0, wave.Enemies.Count);
+            var bonus = wave.Bonuses[index].Bonus;
+
+            return Spawn(bonus);
+        }
+
         private BonusController Spawn(BonusController bonus)
         {
-            return _networkSpawner.Runner.Spawn(bonus, Vector3.zero, Quaternion.identity);
+            return _networkSpawner.Runner.Spawn(bonus, _spawnPosition.transform.position, Quaternion.identity);
         }
     }
 }
